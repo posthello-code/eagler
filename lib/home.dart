@@ -24,6 +24,9 @@ class _MyHomePageState extends State<MyHomePage> {
       case 1:
         page = FavoritesPage();
         break;
+      case 2:
+        page = LoginPage();
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -37,17 +40,18 @@ class _MyHomePageState extends State<MyHomePage> {
         child: page,
       ),
     );
+    // Check if the current page is the login page
+    var isLoginPage = page is LoginPage;
 
-    return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 450) {
-            // Use a more mobile-friendly layout with BottomNavigationBar
-            // on narrow screens.
-            return Column(
-              children: [
-                Expanded(child: mainArea),
-                SafeArea(
+    // Conditionally render the sidebar
+    var sidebar = isLoginPage
+        ? null
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 450) {
+                // Use a more mobile-friendly layout with BottomNavigationBar
+                // on narrow screens.
+                return SafeArea(
                   child: BottomNavigationBar(
                     items: [
                       BottomNavigationBarItem(
@@ -58,6 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         icon: Icon(Icons.favorite),
                         label: 'Favorites',
                       ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.logout),
+                        label: 'Logout',
+                      ),
                     ],
                     currentIndex: selectedIndex,
                     onTap: (value) {
@@ -66,13 +74,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                     },
                   ),
-                )
-              ],
-            );
-          } else {
-            return Row(
-              children: [
-                SafeArea(
+                );
+              } else {
+                return SafeArea(
                   child: NavigationRail(
                     extended: constraints.maxWidth >= 600,
                     destinations: [
@@ -84,6 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         icon: Icon(Icons.favorite),
                         label: Text('Favorites'),
                       ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.logout),
+                        label: Text('Logout'),
+                      ),
                     ],
                     selectedIndex: selectedIndex,
                     onDestinationSelected: (value) {
@@ -92,12 +100,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                     },
                   ),
-                ),
-                Expanded(child: mainArea),
-              ],
-            );
-          }
-        },
+                );
+              }
+            },
+          );
+
+    return Scaffold(
+      body: Row(
+        children: [
+          Container(child: sidebar),
+          Expanded(child: mainArea),
+        ],
       ),
     );
   }

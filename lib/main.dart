@@ -74,18 +74,6 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  // login page username textfield with padding
-  Widget textField(labelText) {
-    return TextFormField(
-      decoration: InputDecoration(
-        constraints: BoxConstraints(maxWidth: 300),
-        contentPadding: EdgeInsets.all(10),
-        labelText: labelText,
-        border: OutlineInputBorder(gapPadding: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,7 +86,6 @@ class LoginPage extends StatelessWidget {
               style: Theme.of(context).textTheme.displayLarge,
             ),
             SizedBox(height: 20),
-            textField('Token'),
             SizedBox(height: 20),
             loginButton(context),
           ],

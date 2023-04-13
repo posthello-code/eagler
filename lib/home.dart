@@ -1,7 +1,9 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
+import 'login.dart';
 import 'main.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -14,17 +16,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     var colorScheme = Theme.of(context).colorScheme;
 
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = GeneratorPage();
+        page = SetupPage();
         break;
       case 1:
         page = FavoritesPage();
         break;
       case 2:
+        appState.token = '';
         page = LoginPage();
         break;
       default:
@@ -43,125 +47,89 @@ class _MyHomePageState extends State<MyHomePage> {
     // Check if the current page is the login page
     var isLoginPage = page is LoginPage;
 
-    // Conditionally render the sidebar
+    // Conditionally render the navbar
     var sidebar = isLoginPage
         ? null
-        : LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth < 450) {
-                // Use a more mobile-friendly layout with BottomNavigationBar
-                // on narrow screens.
-                return SafeArea(
-                  child: BottomNavigationBar(
-                    items: [
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.home),
-                        label: 'Home',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.favorite),
-                        label: 'Favorites',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.logout),
-                        label: 'Logout',
-                      ),
-                    ],
-                    currentIndex: selectedIndex,
-                    onTap: (value) {
-                      setState(() {
-                        selectedIndex = value;
-                      });
-                    },
-                  ),
-                );
-              } else {
-                return SafeArea(
-                  child: NavigationRail(
-                    extended: constraints.maxWidth >= 600,
-                    destinations: [
-                      NavigationRailDestination(
-                        icon: Icon(Icons.home),
-                        label: Text('Home'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.favorite),
-                        label: Text('Favorites'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.logout),
-                        label: Text('Logout'),
-                      ),
-                    ],
-                    selectedIndex: selectedIndex,
-                    onDestinationSelected: (value) {
-                      setState(() {
-                        selectedIndex = value;
-                      });
-                    },
-                  ),
-                );
-              }
-            },
+        : BottomAppBar(
+            child: BottomNavigationBar(
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite),
+                  label: 'Favorites',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.logout),
+                  label: 'Logout',
+                ),
+              ],
+              currentIndex: selectedIndex,
+              onTap: (value) {
+                setState(() {
+                  selectedIndex = value;
+                });
+              },
+            ),
           );
 
     return Scaffold(
       body: Row(
         children: [
-          Container(child: sidebar),
+          //Container(child: sidebar),
           Expanded(child: mainArea),
         ],
       ),
+      bottomNavigationBar: sidebar,
     );
   }
 }
 
-class GeneratorPage extends StatelessWidget {
+class SetupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var pair = appState.current;
-
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
-    }
 
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            flex: 3,
-            child: HistoryListView(),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text('Welcome to Eagler!'),
+        SizedBox(height: 20),
+        TextField(
+          onChanged: (value) {
+            appState.url = value;
+          },
+          maxLines: 3,
+          decoration: InputDecoration(
+            constraints: BoxConstraints(maxWidth: 400),
+            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            labelText: 'Http URL',
+            border: OutlineInputBorder(gapPadding: 2),
           ),
-          SizedBox(height: 10),
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
-          Spacer(flex: 2),
-        ],
-      ),
+        ),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () async {
+            print(appState.url);
+            print(appState.token);
+            try {
+              var response = await http.get(Uri.parse(appState.url),
+                  headers: {'Authorization': 'Bearer ${appState.token}'});
+              if (response.statusCode == 200) {
+                // Do something with the response data
+                //print(response.body);
+              } else {
+                // Handle error response
+                //print('Request failed with status: ${response.statusCode}.');
+              }
+            } catch (e) {
+              print(e.runtimeType);
+            }
+          },
+          child: Text('Send'),
+        ),
+      ]),
     );
   }
 }

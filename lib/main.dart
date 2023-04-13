@@ -3,7 +3,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'home.dart';
+import 'login.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,6 +34,9 @@ class MyAppState extends ChangeNotifier {
 
   GlobalKey? historyListKey;
 
+  String token = '';
+  String url = '';
+
   void getNext() {
     history.insert(0, current);
     var animatedList = historyListKey?.currentState as AnimatedListState?;
@@ -57,40 +60,5 @@ class MyAppState extends ChangeNotifier {
   void removeFavorite(WordPair pair) {
     favorites.remove(pair);
     notifyListeners();
-  }
-}
-
-//Login page for the app
-class LoginPage extends StatelessWidget {
-  // login button widget
-  Widget loginButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => MyHomePage()),
-        );
-      },
-      child: Text('Login'),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Eagler',
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
-            SizedBox(height: 20),
-            SizedBox(height: 20),
-            loginButton(context),
-          ],
-        ),
-      ),
-    );
   }
 }

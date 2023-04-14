@@ -120,8 +120,9 @@ class SetupPage extends StatelessWidget {
             try {
               Response response;
               if (appState.token != '') {
-                response =
-                    await http.get(Uri.parse(appState.url), headers: headers);
+                response = await http.get(Uri.parse(appState.url), headers: {
+                  "Authorization": 'Bearer ${appState.token}',
+                });
               } else {
                 response = await http.get(Uri.parse(appState.url));
               }
@@ -129,6 +130,7 @@ class SetupPage extends StatelessWidget {
               if (response.statusCode == 200) {
                 // Do something with the response data
                 print(response.body);
+                // f below parses a json response for a specific API, left here for debugging.
                 // Object f = jsonDecode(response.body)[0]['entries'].values.first;
                 appState.response = response.body;
               } else {

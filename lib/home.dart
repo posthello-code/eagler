@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -113,21 +116,41 @@ class SetupPage extends StatelessWidget {
           onPressed: () async {
             print(appState.url);
             print(appState.token);
+            Map<String, String> headers = {};
             try {
-              var response = await http.get(Uri.parse(appState.url),
-                  headers: {'Authorization': 'Bearer ${appState.token}'});
+              Response response;
+              if (appState.token != '') {
+                response =
+                    await http.get(Uri.parse(appState.url), headers: headers);
+              } else {
+                response = await http.get(Uri.parse(appState.url));
+              }
+
               if (response.statusCode == 200) {
                 // Do something with the response data
-                //print(response.body);
+                print(response.body);
+                // Object f = jsonDecode(response.body)[0]['entries'].values.first;
+                appState.response = response.body;
               } else {
                 // Handle error response
-                //print('Request failed with status: ${response.statusCode}.');
+                print('Request failed with status: ${response.statusCode}.');
               }
             } catch (e) {
               print(e.runtimeType);
             }
           },
           child: Text('Send'),
+        ),
+        SizedBox(height: 20),
+        TextField(
+          enabled: false,
+          maxLines: 3,
+          decoration: InputDecoration(
+            constraints: BoxConstraints(maxWidth: 400),
+            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            labelText: appState.response,
+            border: OutlineInputBorder(gapPadding: 2),
+          ),
         ),
       ]),
     );

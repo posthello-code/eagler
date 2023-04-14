@@ -31,11 +31,14 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   var history = <WordPair>[];
+  String response = '';
 
   GlobalKey? historyListKey;
 
   String token = '';
   String url = '';
+
+  void updateResponseText() {}
 
   void getNext() {
     history.insert(0, current);

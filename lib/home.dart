@@ -26,6 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
       case 1:
         appState.token = '';
+        appState.response = '';
         page = LoginPage();
         break;
       default:
@@ -85,7 +86,7 @@ class RequesterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    return Center(
+    var content = Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text('Welcome to Eagler!'),
         SizedBox(height: 20),
@@ -118,7 +119,7 @@ class RequesterPage extends StatelessWidget {
                 print(response.body);
                 // f below parses a json response for a specific API, left here for debugging.
                 // Object f = jsonDecode(response.body)[0]['entries'].values.first;
-                appState.response = response.body;
+                appState.updateResponseText(response.body);
               } else {
                 // Handle error response
                 print('Request failed with status: ${response.statusCode}.');
@@ -129,18 +130,26 @@ class RequesterPage extends StatelessWidget {
           },
           child: Text('Send'),
         ),
-        SizedBox(height: 20),
-        TextField(
-          enabled: false,
-          maxLines: 3,
-          decoration: InputDecoration(
-            constraints: BoxConstraints(maxWidth: 400),
-            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-            labelText: appState.response,
-            border: OutlineInputBorder(gapPadding: 2),
+        SizedBox(
+          height: 20,
+        ),
+        Container(
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            border: Border(
+              top: BorderSide(),
+              left: BorderSide(),
+              right: BorderSide(),
+              bottom: BorderSide(),
+            ),
           ),
+          constraints: BoxConstraints(maxWidth: 400),
+          padding: EdgeInsets.all(10),
+          child: Text(appState.response),
         ),
       ]),
     );
+
+    return Container(child: content);
   }
 }

@@ -88,7 +88,15 @@ class RequesterPage extends StatelessWidget {
 
     var content = Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text('Welcome to Eagler!'),
+        Text('Welcome to Eagler!',
+            style: Theme.of(context).textTheme.headlineMedium),
+        SizedBox(height: 20),
+        SizedBox(
+          width: 400,
+          child: Text(
+              'This is where you put a url. In the future you will be able to '
+              'make requests on a schedule, and other fancy things.'),
+        ),
         SizedBox(height: 20),
         TextField(
           onChanged: (value) {
@@ -96,6 +104,7 @@ class RequesterPage extends StatelessWidget {
           },
           maxLines: 3,
           decoration: InputDecoration(
+            helperText: 'example https://api.quotable.io/random',
             constraints: BoxConstraints(maxWidth: 400),
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             labelText: 'Http URL',
@@ -134,20 +143,18 @@ class RequesterPage extends StatelessWidget {
         SizedBox(
           height: 20,
         ),
-        Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            border: Border(
-              top: BorderSide(),
-              left: BorderSide(),
-              right: BorderSide(),
-              bottom: BorderSide(),
-            ),
-          ),
-          constraints: BoxConstraints(maxWidth: 400),
-          padding: EdgeInsets.all(10),
-          child: Text(appState.response),
+        SizedBox(
+          child: Text('Response:'),
         ),
+        SizedBox(height: 20),
+        Container(
+          padding: EdgeInsets.all(10),
+          child: SizedBox(
+            width: 400,
+            child: Text(appState.response),
+          ),
+        ),
+        SizedBox(height: 20),
       ]),
     );
 

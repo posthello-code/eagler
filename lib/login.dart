@@ -50,7 +50,14 @@ class LoginPage extends StatelessWidget {
             tokenInput(context),
             SizedBox(height: 20),
             loginButton(context),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
+            SizedBox(
+              width: 400,
+              child: Text(
+                  'Eagler can make an API request for you. You can provide '
+                  'a bearer token if you need to. Or just press the button to '
+                  'continue'),
+            ),
           ],
         ),
       ),

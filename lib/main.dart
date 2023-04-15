@@ -39,6 +39,11 @@ class MyAppState extends ChangeNotifier {
   String url = '';
 
   void updateResponseText(response) {
+    if (response.length > 600) {
+      response = response.substring(0, 1000) +
+          '...\n\n\n'
+              'response was limited to 1000 characters';
+    }
     this.response = response;
     notifyListeners();
   }

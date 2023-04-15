@@ -8,7 +8,7 @@
     "description": "A new Flutter project.",
     "orientation": "portrait-primary",
     "permissions_policy": {
-      "interest-cohort": ["none"]
+      "interest-cohort": ["self"]
     },
     "prefer_related_applications": false,
     "icons": [

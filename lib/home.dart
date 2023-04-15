@@ -121,11 +121,12 @@ class RequesterPage extends StatelessWidget {
                 // Object f = jsonDecode(response.body)[0]['entries'].values.first;
                 appState.updateResponseText(response.body);
               } else {
-                // Handle error response
-                print('Request failed with status: ${response.statusCode}.');
+                appState.updateResponseText(response.body);
+                appState.updateResponseText(
+                    'Request failed with status: ${response.statusCode}.');
               }
             } catch (e) {
-              print(e.runtimeType);
+              appState.updateResponseText('Error: $e');
             }
           },
           child: Text('Send'),

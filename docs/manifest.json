@@ -7,6 +7,9 @@
     "theme_color": "#0175C2",
     "description": "A new Flutter project.",
     "orientation": "portrait-primary",
+    "permissions_policy": {
+      "interest-cohort": ["none"]
+    },
     "prefer_related_applications": false,
     "icons": [
         {

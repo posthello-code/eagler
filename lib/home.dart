@@ -24,7 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        appState.url = 'https://api.quotable.io/random';
+        appState.url = defaultUrl;
         page = RequesterPage();
         break;
       case 1:

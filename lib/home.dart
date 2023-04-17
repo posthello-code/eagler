@@ -22,11 +22,13 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
+        appState.url = 'https://api.quotable.io/random';
         page = RequesterPage();
         break;
       case 1:
         appState.token = '';
         appState.response = '';
+        appState.url = '';
         page = LoginPage();
         break;
       default:
@@ -102,13 +104,14 @@ class RequesterPage extends StatelessWidget {
           onChanged: (value) {
             if (value != '') {
               appState.url = 'https://$value';
+            } else {
+              appState.url = defaultUrl;
             }
           },
           maxLines: 3,
           decoration: InputDecoration(
             prefixText: 'https://',
-            hintStyle: TextStyle(color: Colors.grey),
-            hintText: 'api.quotable.io/random',
+            helperText: 'Default: $defaultUrl',
             constraints: BoxConstraints(maxWidth: 400),
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             labelText: 'Http URL',

@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'login.dart';
 import 'main.dart';
 
+String defaultUrl = 'https://api.quotable.io/random';
+
 class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();

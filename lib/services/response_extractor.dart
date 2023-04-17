@@ -1,12 +1,19 @@
 /// This function extracts a value from a JSON response based on a user provided
 /// schema.
+///
+/// The schema is a recursive structure that describes the path to the value
+/// Each node in the schema has a type, and an optional child node.
+/// The type can be 'array', 'object', or 'value'.
+/// To terminate the recursion, the type must be 'value'.
+///
 /// ```
 /// {
 ///   'type': 'array', // array, object, or value (string, int, etc)
 ///   'arrayElement': 0, // ignored if type is not 'array'
 ///   'objectProperty': null, // ignored if type is not 'object'
 ///   'child': { 'type': 'value'} // recursive structure, value terminates recursion
-/// }```
+/// }
+
 extractValue(dynamic data, Map<String, dynamic> schema) {
   if (schema['type'] == 'array') {
     int elementIndex = schema['arrayElement'];

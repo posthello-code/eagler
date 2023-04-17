@@ -9,6 +9,9 @@ class LoginPage extends StatelessWidget {
   // login button widget
   Widget loginButton(BuildContext context) {
     return ElevatedButton(
+      style: ButtonStyle(
+        minimumSize: MaterialStateProperty.all(Size(400, 100)),
+      ),
       onPressed: () {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => MyHomePage()),

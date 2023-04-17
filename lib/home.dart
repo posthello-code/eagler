@@ -29,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
       case 1:
         appState.token = '';
-        appState.response = '';
+        appState.response = 'Waiting for request...';
         appState.url = '';
         page = LoginPage();
         break;
@@ -179,7 +179,7 @@ class RequesterPage extends StatelessWidget {
                 SizedBox(height: 20),
                 Container(
                     alignment: Alignment.centerLeft,
-                    child: Text('Response:\n\n${appState.response}}')),
+                    child: Text('Response:\n\n${appState.response}')),
               ],
             ),
           ),

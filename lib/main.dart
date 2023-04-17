@@ -36,7 +36,7 @@ class MyAppState extends ChangeNotifier {
   GlobalKey? historyListKey;
 
   String token = '';
-  String url = 'https://api.quotable.io/random';
+  String url = '';
 
   void updateResponseText(response) {
     if (response.length > 600) {

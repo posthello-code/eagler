@@ -120,8 +120,11 @@ class RequesterPage extends StatelessWidget {
             border: OutlineInputBorder(gapPadding: 2),
           ),
         ),
-        SizedBox(height: 20),
+        SizedBox(height: 30),
         ElevatedButton(
+          style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all(Size(400, 100)),
+              backgroundColor: MaterialStateProperty.all(Colors.deepPurple)),
           onPressed: () async {
             try {
               Response response;

@@ -153,9 +153,21 @@ class RequesterPage extends StatelessWidget {
           child: Text('Send'),
         ),
         SizedBox(
-          height: 20,
+          height: 30,
         ),
         Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
           padding: EdgeInsets.all(10),
           child: SizedBox(
             width: 400,
@@ -163,9 +175,11 @@ class RequesterPage extends StatelessWidget {
               children: [
                 Container(
                     alignment: Alignment.centerLeft,
-                    child: Text('URI:\n\n${appState.url}\n\nResponse:')),
+                    child: Text('URI:\n\n${appState.url}')),
                 SizedBox(height: 20),
-                Text(appState.response),
+                Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Response:\n\n${appState.response}}')),
               ],
             ),
           ),

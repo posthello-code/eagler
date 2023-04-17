@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import 'login.dart';
 import 'main.dart';
+import 'services/response_extractor.dart';
 
 String defaultUrl = 'https://api.quotable.io/random';
 
@@ -24,7 +27,9 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        appState.url = defaultUrl;
+        if (appState.url == '') {
+          appState.url = defaultUrl;
+        }
         page = RequesterPage();
         break;
       case 1:
@@ -137,10 +142,15 @@ class RequesterPage extends StatelessWidget {
               }
 
               if (response.statusCode == 200) {
-                print(response.body);
-                // f below parses a json response for a specific API, left here for debugging.
-                // Object f = jsonDecode(response.body)[0]['entries'].values.first;
-                appState.updateResponseText(response.body);
+                // TODO: this will take a user provided schema as the second argument
+                dynamic extractedValue =
+                    extractValue(jsonDecode(response.body), {'type': 'value'});
+                if (extractedValue != null) {
+                  appState.updateResponseText('$extractedValue');
+                } else {
+                  appState
+                      .updateResponseText('The parser could not find a value.');
+                }
               } else {
                 appState.updateResponseText(response.body);
                 appState.updateResponseText(

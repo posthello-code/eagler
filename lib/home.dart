@@ -99,14 +99,16 @@ class RequesterPage extends StatelessWidget {
         ),
         SizedBox(height: 20),
         TextField(
-          controller: TextEditingController(text: ''),
           onChanged: (value) {
-            appState.url = 'https://$value';
+            if (value != '') {
+              appState.url = 'https://$value';
+            }
           },
           maxLines: 3,
           decoration: InputDecoration(
             prefixText: 'https://',
-            helperText: 'example https://api.quotable.io/random',
+            hintStyle: TextStyle(color: Colors.grey),
+            hintText: 'api.quotable.io/random',
             constraints: BoxConstraints(maxWidth: 400),
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             labelText: 'Http URL',
@@ -153,7 +155,7 @@ class RequesterPage extends StatelessWidget {
               children: [
                 Container(
                     alignment: Alignment.centerLeft,
-                    child: Text('${appState.url}\n\nResponse:')),
+                    child: Text('URI:\n\n${appState.url}\n\nResponse:')),
                 SizedBox(height: 20),
                 Text(appState.response),
               ],

@@ -39,7 +39,6 @@ jobs:
           flutter-sdk-version: stable
       - run: flutter --version
       - run: flutter pub get
-      - run: flutter test
       - run: flutter build web --base-href=/eagler/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1

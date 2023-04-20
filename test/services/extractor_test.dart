@@ -20,16 +20,16 @@ dynamic extractorSchemaExample = {
   }
 };
 
-dynamic data = [
+dynamic responseExample = [
   {
-    "subdeviceGuid": "00078100025c288f",
-    "componentId": "all",
-    "entries": {"1681718544000": 1.74}
+    "id": "1234",
+    "componentId": "1234",
+    "entries": {"someValue": 1.74}
   }
 ];
 
 void main() {
   test('the extractor can extract a user provided extractorSchema', () {
-    expect(extractValue(data, extractorSchemaExample), 1.74);
+    expect(extractValue(responseExample, extractorSchemaExample), 1.74);
   });
 }

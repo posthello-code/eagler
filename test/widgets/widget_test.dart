@@ -14,7 +14,9 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
-    // Tap the login button
-    expect(find.widgetWithText(ElevatedButton, 'Login'), findsOneWidget);
+    // find the login button
+    dynamic loginButton = find.widgetWithText(ElevatedButton, 'Login');
+    // verify that the login button is present
+    expect(loginButton, findsOneWidget);
   });
 }

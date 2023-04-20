@@ -219,7 +219,7 @@ class RequesterPage extends StatelessWidget {
               children: [
                 Container(
                     alignment: Alignment.centerLeft,
-                    child: Text('URI:\n\n${appState.url}')),
+                    child: Text('URL:\n\n${appState.url}')),
                 SizedBox(height: 20),
                 Container(
                     alignment: Alignment.centerLeft,

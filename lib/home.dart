@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
@@ -93,6 +93,8 @@ class _MyHomePageState extends State<MyHomePage> {
 class RequesterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Timer debounce = Timer(Duration(milliseconds: 0), () {});
+    const int delayTime = 1000; // in milliseconds
     var appState = context.watch<MyAppState>();
 
     var content = Center(
@@ -165,6 +167,38 @@ class RequesterPage extends StatelessWidget {
         SizedBox(
           height: 30,
         ),
+        TextField(
+          onEditingComplete: () => {},
+          onChanged: (value) {
+            debounce.cancel();
+            debounce = Timer(Duration(milliseconds: delayTime), () {
+              try {
+                appState.extractorSchema = (jsonDecode(value));
+                appState.updateSchemaValidatorText('');
+              } catch (e) {
+                appState.extractorSchema = defaultExtractorSchema;
+                appState.updateSchemaValidatorText('Invalid schema: $e');
+              }
+            });
+          },
+          maxLines: 3,
+          decoration: InputDecoration(
+            errorText: appState.schemaValidatorString.isNotEmpty
+                ? appState.schemaValidatorString
+                : null,
+            errorMaxLines: 4,
+            helperText: 'Default: ${jsonEncode(defaultExtractorSchema)}'
+                '\n\n'
+                'The extractor schema helps you parse JSON responses. '
+                'Documentation should go here in the future.',
+            constraints: BoxConstraints(maxWidth: 400),
+            helperMaxLines: 5,
+            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            labelText: 'Extractor Schema',
+            border: OutlineInputBorder(gapPadding: 2),
+          ),
+        ),
+        SizedBox(height: 30),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,

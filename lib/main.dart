@@ -1,9 +1,13 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'login.dart';
+
+Map<String, dynamic> defaultExtractorSchema = {
+  'type': 'object',
+  'objectProperty': 'content',
+  'child': {'type': 'value'}
+};
 
 void main() {
   runApp(MyApp());
@@ -29,14 +33,16 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-  var history = <WordPair>[];
-  String response = '';
-
-  GlobalKey? historyListKey;
-
   String token = '';
   String url = '';
+  Map<String, dynamic> extractorSchema = defaultExtractorSchema;
+  String response = '';
+  String schemaValidatorString = '';
+
+  void updateSchemaValidatorText(String errorText) {
+    schemaValidatorString = errorText;
+    notifyListeners();
+  }
 
   void updateResponseText(response) {
     if (response.length > 600) {

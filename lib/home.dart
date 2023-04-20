@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
@@ -93,6 +93,8 @@ class _MyHomePageState extends State<MyHomePage> {
 class RequesterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Timer debounce = Timer(Duration(milliseconds: 0), () {});
+    const int delayTime = 1000; // in milliseconds
     var appState = context.watch<MyAppState>();
 
     var content = Center(
@@ -142,14 +144,14 @@ class RequesterPage extends StatelessWidget {
               }
 
               if (response.statusCode == 200) {
-                // TODO: this will take a user provided schema as the second argument
-                dynamic extractedValue =
-                    extractValue(jsonDecode(response.body), {'type': 'value'});
+                dynamic extractedValue = extractValue(
+                    jsonDecode(response.body), appState.extractorSchema);
                 if (extractedValue != null) {
                   appState.updateResponseText('$extractedValue');
                 } else {
-                  appState
-                      .updateResponseText('The parser could not find a value.');
+                  appState.updateResponseText(
+                      'The parser could not find a value for the schema:\n\n'
+                      '${jsonEncode(appState.extractorSchema)}');
                 }
               } else {
                 appState.updateResponseText(response.body);
@@ -165,6 +167,38 @@ class RequesterPage extends StatelessWidget {
         SizedBox(
           height: 30,
         ),
+        TextField(
+          onEditingComplete: () => {},
+          onChanged: (value) {
+            debounce.cancel();
+            debounce = Timer(Duration(milliseconds: delayTime), () {
+              try {
+                appState.extractorSchema = (jsonDecode(value));
+                appState.updateSchemaValidatorText('');
+              } catch (e) {
+                appState.extractorSchema = defaultExtractorSchema;
+                appState.updateSchemaValidatorText('Invalid schema: $e');
+              }
+            });
+          },
+          maxLines: 3,
+          decoration: InputDecoration(
+            errorText: appState.schemaValidatorString.isNotEmpty
+                ? appState.schemaValidatorString
+                : null,
+            errorMaxLines: 4,
+            helperText: 'Default: ${jsonEncode(defaultExtractorSchema)}'
+                '\n\n'
+                'The extractor schema helps you parse JSON responses. '
+                'Documentation should go here in the future.',
+            constraints: BoxConstraints(maxWidth: 400),
+            helperMaxLines: 5,
+            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            labelText: 'Extractor Schema',
+            border: OutlineInputBorder(gapPadding: 2),
+          ),
+        ),
+        SizedBox(height: 30),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -185,7 +219,7 @@ class RequesterPage extends StatelessWidget {
               children: [
                 Container(
                     alignment: Alignment.centerLeft,
-                    child: Text('URI:\n\n${appState.url}')),
+                    child: Text('URL:\n\n${appState.url}')),
                 SizedBox(height: 20),
                 Container(
                     alignment: Alignment.centerLeft,

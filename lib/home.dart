@@ -144,14 +144,14 @@ class RequesterPage extends StatelessWidget {
               }
 
               if (response.statusCode == 200) {
-                // TODO: this will take a user provided schema as the second argument
-                dynamic extractedValue =
-                    extractValue(jsonDecode(response.body), {'type': 'value'});
+                dynamic extractedValue = extractValue(
+                    jsonDecode(response.body), appState.extractorSchema);
                 if (extractedValue != null) {
                   appState.updateResponseText('$extractedValue');
                 } else {
-                  appState
-                      .updateResponseText('The parser could not find a value.');
+                  appState.updateResponseText(
+                      'The parser could not find a value for the schema:\n\n'
+                      '${jsonEncode(appState.extractorSchema)}');
                 }
               } else {
                 appState.updateResponseText(response.body);

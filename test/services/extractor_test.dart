@@ -19,40 +19,36 @@ void main() {
       "entries": {"unknownProp": 1.74}
     });
   });
-
   test("successful parse properties of an item in list response", () {
     Response res = Response('[{"subdeviceGuid":"1234"}]', 200);
 
     expect((jsonDecode(extractValueFromResponse(res, 'body[0].subdeviceGuid'))),
         1234);
   });
-
   test("successful parse properties from an object response", () {
     Response res = Response('{"entries":{"unknownProp": 1.74}}', 200);
     expect(
         extractValueFromResponse(res, 'body.entries'), {"unknownProp": 1.74});
   });
-
   test("successful parse array strings from response object", () {
     Response res = Response(
         '{"entries":{"unknownProp": 1.74}, "another": [ "test", "test2" ]}',
         200);
     expect(extractValueFromResponse(res, 'body.another[1]'), "test2");
   });
-
   test("successful parse array ints fro from response object", () {
     Response res = Response(
         '{"entries":{"unknownProp": 1.74}, "another": [ 12, 13 ]}', 200);
     expect(int.parse(extractValueFromResponse(res, 'body.another[1]')), 13);
   });
-
   test("successful parse 'values' keyword", () {
     Response res = Response('[{"entries":{"unknownProp": 1.74}}]', 200);
     expect(extractValueFromResponse(res, 'body[0].entries.values'), [1.74]);
   });
-
-  test("successfully parse 'first' keyword", () {
-    Response res = Response('[{"entries":{"unknownProp": 1.74}}]', 200);
-    expect(extractValueFromResponse(res, 'body[0].entries.values.first'), 1.74);
+  test(
+      "successfully parse properties of array items that are not in a body array",
+      () {
+    Response res = Response('{"entries":[{"API": 1.74}]}', 200);
+    expect((extractValueFromResponse(res, 'body.entries[0].API')), 1.74);
   });
 }

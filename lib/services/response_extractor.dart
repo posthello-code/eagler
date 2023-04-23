@@ -24,6 +24,8 @@ dynamic traverseJsonObject(dynamic body, String path) {
     } else if (properties[0] == 'first') {
       // return first item in "values"
       return body;
+    } else if (body is num) {
+      return body;
     } else if (body[0] == '{' && properties[0] != 'body') {
       // return objects when there's only one property left
       return jsonDecode(body);
@@ -55,7 +57,13 @@ dynamic traverseJsonObject(dynamic body, String path) {
       dynamic newResponse = jsonDecode(body)[index][properties[1]];
       return traverseJsonObject(newResponse, path);
     } else {
-      dynamic newResponse = json.decode(body)[properties[1]];
+      dynamic newResponse;
+      if (body is String) {
+        newResponse = json.decode(body)[properties[1]];
+      } else {
+        newResponse = body[properties[1]];
+      }
+
       if (newResponse is Map<String, dynamic> || newResponse is List<dynamic>) {
         newResponse = json.encode(newResponse);
       }

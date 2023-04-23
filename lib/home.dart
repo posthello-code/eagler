@@ -146,7 +146,8 @@ class RequesterPage extends StatelessWidget {
               if (response.statusCode == 200) {
                 dynamic extractedValue =
                     extractValueFromResponse(response, appState.extractorPath);
-                print('extractedValue');
+                print('extractedValue $extractedValue');
+
                 if (extractedValue is String || extractedValue is num) {
                   appState.updateResponseText(extractedValue);
                 } else if (extractedValue != null) {

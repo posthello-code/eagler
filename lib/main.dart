@@ -33,10 +33,10 @@ class MyAppState extends ChangeNotifier {
   String url = '';
   String extractorPath = defaultExtractorPath;
   String response = '';
-  String schemaValidatorString = '';
+  String pathValidatorString = '';
 
-  void updateSchemaValidatorText(String errorText) {
-    schemaValidatorString = errorText;
+  void updatePathValidatorText(String errorText) {
+    pathValidatorString = errorText;
     notifyListeners();
   }
 

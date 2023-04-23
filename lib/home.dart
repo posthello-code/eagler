@@ -94,7 +94,7 @@ class RequesterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Timer debounce = Timer(Duration(milliseconds: 0), () {});
-    const int delayTime = 1000; // in milliseconds
+    const int delayTime = 500; // in milliseconds
     var appState = context.watch<MyAppState>();
 
     var content = Center(
@@ -154,7 +154,7 @@ class RequesterPage extends StatelessWidget {
                   appState.updateResponseText(jsonEncode(extractedValue));
                 } else {
                   appState.updateResponseText(
-                      'The parser could not find a value for the schema:\n\n'
+                      'The parser could not find a value for the path:\n\n'
                       '${jsonEncode(appState.extractorPath)}');
                 }
               } else {
@@ -176,29 +176,35 @@ class RequesterPage extends StatelessWidget {
           onChanged: (value) {
             debounce.cancel();
             debounce = Timer(Duration(milliseconds: delayTime), () {
-              try {
+              if (value.endsWith('.') ||
+                  value.contains(' ') ||
+                  value.endsWith(' ')) {
+                appState.updatePathValidatorText('Invalid path');
+              } else if (!value.split('.')[0].contains('body') ||
+                  !(value.split('.')[0].contains('body'))) {
+                appState.updatePathValidatorText('Must begin with "body" or '
+                    '"body[i]"');
+              } else {
                 appState.extractorPath = value;
-                appState.updateSchemaValidatorText('');
-              } catch (e) {
-                appState.extractorPath = defaultExtractorPath;
-                appState.updateSchemaValidatorText('Invalid text: $e');
+                appState.updatePathValidatorText('');
               }
             });
           },
-          maxLines: 3,
+          maxLines: 1,
           decoration: InputDecoration(
-            errorText: appState.schemaValidatorString.isNotEmpty
-                ? appState.schemaValidatorString
+            errorText: appState.pathValidatorString.isNotEmpty
+                ? appState.pathValidatorString
                 : null,
-            errorMaxLines: 4,
+            errorMaxLines: 5,
             helperText: 'Default: ${jsonEncode(defaultExtractorPath)}'
                 '\n\n'
-                'The extractor schema helps you parse JSON responses. '
-                'Documentation should go here in the future.',
+                'Example:\n'
+                'body.content would return "a profound quote" from the JSON below\n\n'
+                '{ "content": "a profound quote" }',
             constraints: BoxConstraints(maxWidth: 400),
-            helperMaxLines: 5,
+            helperMaxLines: 10,
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-            labelText: 'Extractor Schema',
+            labelText: 'Extractor Path',
             border: OutlineInputBorder(gapPadding: 2),
           ),
         ),

@@ -144,14 +144,18 @@ class RequesterPage extends StatelessWidget {
               }
 
               if (response.statusCode == 200) {
-                dynamic extractedValue = extractValue(
-                    jsonDecode(response.body), appState.extractorSchema);
-                if (extractedValue != null) {
-                  appState.updateResponseText('$extractedValue');
+                dynamic extractedValue =
+                    extractValueFromResponse(response, appState.extractorPath);
+                print('extractedValue');
+                if (extractedValue is String || extractedValue is num) {
+                  appState.updateResponseText(extractedValue);
+                } else if (extractedValue != null) {
+                  print(extractedValue.runtimeType);
+                  appState.updateResponseText(jsonEncode(extractedValue));
                 } else {
                   appState.updateResponseText(
                       'The parser could not find a value for the schema:\n\n'
-                      '${jsonEncode(appState.extractorSchema)}');
+                      '${jsonEncode(appState.extractorPath)}');
                 }
               } else {
                 appState.updateResponseText(response.body);
@@ -173,11 +177,11 @@ class RequesterPage extends StatelessWidget {
             debounce.cancel();
             debounce = Timer(Duration(milliseconds: delayTime), () {
               try {
-                appState.extractorSchema = (jsonDecode(value));
+                appState.extractorPath = value;
                 appState.updateSchemaValidatorText('');
               } catch (e) {
-                appState.extractorSchema = defaultExtractorSchema;
-                appState.updateSchemaValidatorText('Invalid schema: $e');
+                appState.extractorPath = defaultExtractorPath;
+                appState.updateSchemaValidatorText('Invalid text: $e');
               }
             });
           },
@@ -187,7 +191,7 @@ class RequesterPage extends StatelessWidget {
                 ? appState.schemaValidatorString
                 : null,
             errorMaxLines: 4,
-            helperText: 'Default: ${jsonEncode(defaultExtractorSchema)}'
+            helperText: 'Default: ${jsonEncode(defaultExtractorPath)}'
                 '\n\n'
                 'The extractor schema helps you parse JSON responses. '
                 'Documentation should go here in the future.',
@@ -223,7 +227,7 @@ class RequesterPage extends StatelessWidget {
                 SizedBox(height: 20),
                 Container(
                     alignment: Alignment.centerLeft,
-                    child: Text('Response:\n\n${appState.response}')),
+                    child: Text('Extracted Text:\n\n${appState.response}')),
               ],
             ),
           ),

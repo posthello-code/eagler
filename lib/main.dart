@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'login.dart';
 
-Map<String, dynamic> defaultExtractorSchema = {
-  'type': 'object',
-  'objectProperty': 'content',
-  'child': {'type': 'value'}
-};
+String defaultExtractorPath = 'body.content';
 
 void main() {
   runApp(MyApp());
@@ -35,7 +31,7 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   String token = '';
   String url = '';
-  Map<String, dynamic> extractorSchema = defaultExtractorSchema;
+  String extractorPath = defaultExtractorPath;
   String response = '';
   String schemaValidatorString = '';
 
@@ -45,12 +41,13 @@ class MyAppState extends ChangeNotifier {
   }
 
   void updateResponseText(response) {
-    if (response.length > 600) {
+    if (response is num) {
+    } else if (response.length > 600) {
       response = response.substring(0, 1000) +
           '...\n\n\n'
               'response was limited to 1000 characters';
     }
-    this.response = response;
+    this.response = response.toString();
     notifyListeners();
   }
 }

@@ -94,7 +94,7 @@ class RequesterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Timer debounce = Timer(Duration(milliseconds: 0), () {});
-    const int delayTime = 1000; // in milliseconds
+    const int delayTime = 500; // in milliseconds
     var appState = context.watch<MyAppState>();
 
     var content = Center(
@@ -144,14 +144,18 @@ class RequesterPage extends StatelessWidget {
               }
 
               if (response.statusCode == 200) {
-                dynamic extractedValue = extractValue(
-                    jsonDecode(response.body), appState.extractorSchema);
-                if (extractedValue != null) {
-                  appState.updateResponseText('$extractedValue');
+                dynamic extractedValue =
+                    extractValueFromResponse(response, appState.extractorPath);
+                print('extractedValue');
+                if (extractedValue is String || extractedValue is num) {
+                  appState.updateResponseText(extractedValue);
+                } else if (extractedValue != null) {
+                  print(extractedValue.runtimeType);
+                  appState.updateResponseText(jsonEncode(extractedValue));
                 } else {
                   appState.updateResponseText(
-                      'The parser could not find a value for the schema:\n\n'
-                      '${jsonEncode(appState.extractorSchema)}');
+                      'The parser could not find a value for the path:\n\n'
+                      '${jsonEncode(appState.extractorPath)}');
                 }
               } else {
                 appState.updateResponseText(response.body);
@@ -172,29 +176,35 @@ class RequesterPage extends StatelessWidget {
           onChanged: (value) {
             debounce.cancel();
             debounce = Timer(Duration(milliseconds: delayTime), () {
-              try {
-                appState.extractorSchema = (jsonDecode(value));
-                appState.updateSchemaValidatorText('');
-              } catch (e) {
-                appState.extractorSchema = defaultExtractorSchema;
-                appState.updateSchemaValidatorText('Invalid schema: $e');
+              if (value.endsWith('.') ||
+                  value.contains(' ') ||
+                  value.endsWith(' ')) {
+                appState.updatePathValidatorText('Invalid path');
+              } else if (!value.split('.')[0].contains('body') ||
+                  !(value.split('.')[0].contains('body'))) {
+                appState.updatePathValidatorText('Must begin with "body" or '
+                    '"body[i]"');
+              } else {
+                appState.extractorPath = value;
+                appState.updatePathValidatorText('');
               }
             });
           },
-          maxLines: 3,
+          maxLines: 1,
           decoration: InputDecoration(
-            errorText: appState.schemaValidatorString.isNotEmpty
-                ? appState.schemaValidatorString
+            errorText: appState.pathValidatorString.isNotEmpty
+                ? appState.pathValidatorString
                 : null,
-            errorMaxLines: 4,
-            helperText: 'Default: ${jsonEncode(defaultExtractorSchema)}'
+            errorMaxLines: 5,
+            helperText: 'Default: ${jsonEncode(defaultExtractorPath)}'
                 '\n\n'
-                'The extractor schema helps you parse JSON responses. '
-                'Documentation should go here in the future.',
+                'Example:\n'
+                'body.content would return "a profound quote" from the JSON below\n\n'
+                '{ "content": "a profound quote" }',
             constraints: BoxConstraints(maxWidth: 400),
-            helperMaxLines: 5,
+            helperMaxLines: 10,
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-            labelText: 'Extractor Schema',
+            labelText: 'Extractor Path',
             border: OutlineInputBorder(gapPadding: 2),
           ),
         ),
@@ -223,7 +233,7 @@ class RequesterPage extends StatelessWidget {
                 SizedBox(height: 20),
                 Container(
                     alignment: Alignment.centerLeft,
-                    child: Text('Response:\n\n${appState.response}')),
+                    child: Text('Extracted Text:\n\n${appState.response}')),
               ],
             ),
           ),

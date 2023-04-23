@@ -1,40 +1,76 @@
-/// This function extracts a value from a JSON response based on a user provided
-/// schema.
-///
-/// The schema is a recursive structure that describes the path to the value
-/// Each node in the schema has a type, and an optional child node.
-/// The type can be 'array', 'object', or 'value'.
-/// To terminate the recursion, the type must be 'value'.
-///
-/// ```
-/// {
-///   'type': 'array', // array, object, or value (string, int, etc)
-///   'arrayElement': 0, // ignored if type is not 'array'
-///   'objectProperty': null, // ignored if type is not 'object'
-///   'child': { 'type': 'value'} // recursive structure, value terminates recursion
-/// }
+import 'dart:convert';
+import 'package:http/http.dart';
 
-extractValue(dynamic data, Map<String, dynamic> schema) {
-  if (schema['type'] == 'array') {
-    int elementIndex = schema['arrayElement'];
-    if (data is List && elementIndex < data.length) {
-      return extractValue(data[elementIndex], schema['child']);
+/// Returns a value from a JSON response based on the user provided path.
+dynamic extractValueFromResponse(Response response, String path) {
+  dynamic body = response.body;
+  return traverseJsonObject(body, path);
+}
+
+// function to parse the body recursively
+dynamic traverseJsonObject(dynamic body, String path) {
+  List<String> properties = path.split('.');
+  // remove the first property from the path,
+  // necessary if calling traversing JSON recursively
+  path = removeFirstPropertyFromPath(path);
+  if (properties.length == 1) {
+    if (properties[0].contains('body[')) {
+      // return selected item when the path is body[i]
+      int index = int.parse(properties[0].split('[')[1].split(']')[0]);
+      return jsonDecode(body)[index];
+    } else if (properties[0].contains('[')) {
+      // return the selected item of array[i] when there's only one property left
+      return body;
+    } else if (properties[0] == 'first') {
+      // return first item in "values"
+      return body;
+    } else if (body[0] == '{' && properties[0] != 'body') {
+      // return objects when there's only one property left
+      return jsonDecode(body);
+    } else if (properties[0] != 'body') {
+      // return value when there's only one property left
+      return body;
     } else {
-      print('array element $elementIndex not found');
-      return null;
-    }
-  } else if (schema['type'] == 'object') {
-    String propertyName = schema['objectProperty'];
-    if (data is Map && data.containsKey(propertyName)) {
-      return extractValue(data[propertyName], schema['child']);
-    } else if (propertyName == 'values') {
-      return extractValue(data.values, schema['child']);
-    } else if (propertyName == 'first') {
-      return extractValue(data.first, schema['child']);
-    } else {
-      return null;
+      // default also handles when path == 'body'
+      return body;
     }
   } else {
-    return data;
+    // recursion until there's only one property left
+    if (properties[1].contains('[')) {
+      // handle lists
+      String arrayProp = properties[1].split('[')[0];
+      int index = int.parse(properties[1].split('[')[1].split(']')[0]);
+      dynamic newResponse = jsonDecode(body)[arrayProp][index];
+      if (newResponse is int) {
+        newResponse = newResponse.toString();
+      }
+      return traverseJsonObject(newResponse, path);
+    } else if (properties[1] == 'values') {
+      return traverseJsonObject(body.values.toList(), path);
+    } else if (properties[1] == 'first') {
+      return traverseJsonObject(body.first, path);
+    } else if (properties[0].contains('body[')) {
+      // handle body[]
+      int index = int.parse(properties[0].split('[')[1].split(']')[0]);
+      dynamic newResponse = jsonDecode(body)[index][properties[1]];
+      return traverseJsonObject(newResponse, path);
+    } else {
+      dynamic newResponse = json.decode(body)[properties[1]];
+      if (newResponse is Map<String, dynamic> || newResponse is List<dynamic>) {
+        newResponse = json.encode(newResponse);
+      }
+      if (newResponse is int) {
+        newResponse = newResponse.toString();
+      }
+      return traverseJsonObject(newResponse, path);
+    }
+  }
+}
+
+String removeFirstPropertyFromPath(String path) {
+  if (path.contains('.')) {
+    return path.substring(path.indexOf('.') + 1, path.length);
+  } else {
+    return path;
   }
 }

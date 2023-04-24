@@ -9,10 +9,10 @@ dynamic extractValueFromResponse(Response response, String path) {
 
 // function to parse the body recursively
 dynamic traverseJsonObject(dynamic body, String path) {
+  print(body);
+  print(path);
   List<String> properties = path.split('.');
-  // remove the first property from the path,
-  // necessary if calling traversing JSON recursively
-  path = removeFirstPropertyFromPath(path);
+
   if (properties.length == 1) {
     if (properties[0].contains('body[')) {
       // return selected item when the path is body[i]
@@ -37,40 +37,57 @@ dynamic traverseJsonObject(dynamic body, String path) {
       return body;
     }
   } else {
-    // recursion until there's only one property left
-    if (properties[1].contains('[')) {
+    // necessary to remove first property if calling traversing JSON recursively
+    path = removeFirstPropertyFromPath(path);
+    if (properties[0].contains('[') && properties[1].contains('[')) {
+      // handle body[]
+      int index = int.parse(properties[0].split('[')[1].split(']')[0]);
+      String nextProperty = properties[1].split('[')[0];
+      // find selected item in array, and return the next property in path
+      Map selectedItem = jsonDecode(body)[index];
+      body = selectedItem[nextProperty];
+      return traverseJsonObject(body, path);
+    } else if (properties[0].contains('[')) {
+      // handle body[]
+      int index = int.parse(properties[0].split('[')[1].split(']')[0]);
+
+      if (body is String) {
+        body = json.decode(body)[index][properties[1]];
+      } else if (body is Map) {
+        body = body[properties[1]];
+      } else {
+        body = body[index][properties[1]];
+      }
+
+      return traverseJsonObject(body, path);
+    } else if (properties[1].contains('[')) {
       // handle lists
       String arrayProp = properties[1].split('[')[0];
       int index = int.parse(properties[1].split('[')[1].split(']')[0]);
-      dynamic newResponse = jsonDecode(body)[arrayProp][index];
-      if (newResponse is int) {
-        newResponse = newResponse.toString();
+      body = jsonDecode(body)[arrayProp][index];
+      if (body is int) {
+        body = body.toString();
       }
-      return traverseJsonObject(newResponse, path);
+      return traverseJsonObject(body, path);
     } else if (properties[1] == 'values') {
       return traverseJsonObject(body.values.toList(), path);
     } else if (properties[1] == 'first') {
       return traverseJsonObject(body.first, path);
-    } else if (properties[0].contains('body[')) {
-      // handle body[]
-      int index = int.parse(properties[0].split('[')[1].split(']')[0]);
-      dynamic newResponse = jsonDecode(body)[index][properties[1]];
-      return traverseJsonObject(newResponse, path);
     } else {
-      dynamic newResponse;
+      body;
       if (body is String) {
-        newResponse = json.decode(body)[properties[1]];
+        body = json.decode(body)[properties[1]];
       } else {
-        newResponse = body[properties[1]];
+        body = body[properties[1]];
       }
 
-      if (newResponse is Map<String, dynamic> || newResponse is List<dynamic>) {
-        newResponse = json.encode(newResponse);
+      if (body is Map<String, dynamic> || body is List<dynamic>) {
+        body = json.encode(body);
       }
-      if (newResponse is int) {
-        newResponse = newResponse.toString();
+      if (body is int) {
+        body = body.toString();
       }
-      return traverseJsonObject(newResponse, path);
+      return traverseJsonObject(body, path);
     }
   }
 }

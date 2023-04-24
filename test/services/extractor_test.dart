@@ -51,4 +51,10 @@ void main() {
     Response res = Response('{"entries":[{"API": 1.74}]}', 200);
     expect((extractValueFromResponse(res, 'body.entries[0].API')), 1.74);
   });
+  test(
+      "successfully parse properties of array items that are past body in the path",
+      () {
+    Response res = Response('[{"entries":[{"API": 1.74}]}]', 200);
+    expect((extractValueFromResponse(res, 'body[0].entries[0].API')), 1.74);
+  });
 }

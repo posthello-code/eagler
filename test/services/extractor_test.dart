@@ -66,7 +66,7 @@ void main() {
     expect((extractValueFromResponse(res, 'body[0].entries[0].API')), 1.74);
   });
 
-  test("successfully parse lists of lists", () {
+  test("successfully parse objects of lists", () {
     Response res = Response(
         '{"results":[{"location":{"street":{"someObject":"test"}}}]}', 200);
     expect((extractValueFromResponse(res, 'body.results[0].location.street')),

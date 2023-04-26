@@ -172,42 +172,57 @@ class RequesterPage extends StatelessWidget {
         SizedBox(
           height: 30,
         ),
-        TextField(
-          onEditingComplete: () => {},
-          onChanged: (value) {
-            debounce.cancel();
-            debounce = Timer(Duration(milliseconds: delayTime), () {
-              if (value.endsWith('.') ||
-                  value.contains(' ') ||
-                  value.endsWith(' ')) {
-                appState.updatePathValidatorText('Invalid path');
-              } else if (!value.split('.')[0].contains('body') ||
-                  !(value.split('.')[0].contains('body'))) {
-                appState.updatePathValidatorText('Must begin with "body" or '
-                    '"body[i]"');
-              } else {
-                appState.extractorPath = value;
-                appState.updatePathValidatorText('');
-              }
-            });
-          },
-          maxLines: 1,
-          decoration: InputDecoration(
-            errorText: appState.pathValidatorString.isNotEmpty
-                ? appState.pathValidatorString
-                : null,
-            errorMaxLines: 5,
-            helperText: 'Default: ${jsonEncode(defaultExtractorPath)}'
-                '\n\n'
-                'Example:\n'
-                'body.content would return "a profound quote" from the JSON below\n\n'
-                '{ "content": "a profound quote" }',
-            constraints: BoxConstraints(maxWidth: 400),
-            helperMaxLines: 10,
-            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-            labelText: 'Extractor Path',
-            border: OutlineInputBorder(gapPadding: 2),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              onEditingComplete: () => {},
+              onChanged: (value) {
+                debounce.cancel();
+                debounce = Timer(Duration(milliseconds: delayTime), () {
+                  if (value.endsWith('.') ||
+                      value.contains(' ') ||
+                      value.endsWith(' ')) {
+                    appState.updatePathValidatorText('Invalid path');
+                  } else if (!value.split('.')[0].contains('body') ||
+                      !(value.split('.')[0].contains('body'))) {
+                    appState
+                        .updatePathValidatorText('Must begin with "body" or '
+                            '"body[i]"');
+                  } else {
+                    appState.extractorPath = value;
+                    appState.updatePathValidatorText('');
+                  }
+                });
+              },
+              maxLines: 1,
+              decoration: InputDecoration(
+                errorText: appState.pathValidatorString.isNotEmpty
+                    ? appState.pathValidatorString
+                    : null,
+                errorMaxLines: 5,
+                helperText: 'Default: ${jsonEncode(defaultExtractorPath)}'
+                    '\n\n'
+                    'Example:\n'
+                    'body.content would return "a profound quote" from the JSON below\n\n'
+                    '{ "content": "a profound quote" }',
+                constraints: BoxConstraints(maxWidth: 400),
+                helperMaxLines: 10,
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                labelText: 'Extractor Path',
+                border: OutlineInputBorder(gapPadding: 2),
+              ),
+            ),
+            Switch(
+              activeColor: Theme.of(context).colorScheme.primary,
+              value: appState.recurring,
+              onChanged: (bool value) {
+                appState.updateRecurringState(value);
+              },
+            )
+          ],
         ),
         SizedBox(height: 30),
         Container(

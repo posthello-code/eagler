@@ -34,6 +34,12 @@ class MyAppState extends ChangeNotifier {
   String extractorPath = defaultExtractorPath;
   String response = '';
   String pathValidatorString = '';
+  bool recurring = false;
+
+  void updateRecurringState(bool state) {
+    recurring = state;
+    notifyListeners();
+  }
 
   void updatePathValidatorText(String errorText) {
     pathValidatorString = errorText;

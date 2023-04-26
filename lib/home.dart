@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:eagler/services/request_handler.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-
 import 'main.dart';
-import 'services/response_extractor.dart';
 
 String defaultUrl = 'https://api.quotable.io/random';
 
@@ -53,39 +50,7 @@ class HomePage extends StatelessWidget {
             minimumSize: MaterialStateProperty.all(Size(400, 100)),
           ),
           onPressed: () async {
-            try {
-              Response response;
-              if (appState.token != '') {
-                response = await http.get(Uri.parse(appState.url), headers: {
-                  "Authorization": 'Bearer ${appState.token}',
-                });
-              } else {
-                response = await http.get(Uri.parse(appState.url));
-              }
-
-              if (response.statusCode == 200) {
-                dynamic extractedValue =
-                    extractValueFromResponse(response, appState.extractorPath);
-                print('extractedValue $extractedValue');
-
-                if (extractedValue is String || extractedValue is num) {
-                  appState.updateResponseText(extractedValue);
-                } else if (extractedValue != null) {
-                  print(extractedValue.runtimeType);
-                  appState.updateResponseText(jsonEncode(extractedValue));
-                } else {
-                  appState.updateResponseText(
-                      'The parser could not find a value for the path:\n\n'
-                      '${jsonEncode(appState.extractorPath)}');
-                }
-              } else {
-                appState.updateResponseText(response.body);
-                appState.updateResponseText(
-                    'Request failed with status: ${response.statusCode}.');
-              }
-            } catch (e) {
-              appState.updateResponseText('Error: $e');
-            }
+            makeRequest(appState);
           },
           child: Text('Send'),
         ),
@@ -135,7 +100,7 @@ class HomePage extends StatelessWidget {
                 border: OutlineInputBorder(gapPadding: 2),
               ),
             ),
-            SizedBox(width: 20),
+            SizedBox(width: 5),
             Column(
               children: [
                 Text('Recurring'),
@@ -143,9 +108,9 @@ class HomePage extends StatelessWidget {
                   activeColor: Theme.of(context).colorScheme.primary,
                   value: appState.recurring,
                   onChanged: (bool value) {
-                    appState.updateRecurringState(value);
+                    appState.updateRecurringState(value, appState);
                   },
-                )
+                ),
               ],
             ),
           ],

@@ -1,20 +1,22 @@
 //Login page for the app
 import 'package:eagler/main.dart';
+import 'package:eagler/page_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'home.dart';
 
 class LoginPage extends StatelessWidget {
   // login button widget
   Widget loginButton(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        )),
         minimumSize: MaterialStateProperty.all(Size(400, 100)),
       ),
       onPressed: () {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => MyHomePage()),
+          MaterialPageRoute(builder: (context) => PageLoader()),
         );
       },
       child: Text('Login'),
@@ -40,6 +42,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

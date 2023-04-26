@@ -6,11 +6,11 @@ import 'login.dart';
 String defaultExtractorPath = 'body.content';
 
 void main() {
-  runApp(MyApp());
+  runApp(App());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,9 @@ class MyApp extends StatelessWidget {
         title: 'Eagler App',
         theme: ThemeData(
           useMaterial3: false,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepPurple,
+          ),
         ),
         home: LoginPage(),
       ),

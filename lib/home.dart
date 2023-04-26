@@ -5,92 +5,12 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
-import 'login.dart';
 import 'main.dart';
 import 'services/response_extractor.dart';
 
 String defaultUrl = 'https://api.quotable.io/random';
 
-class MyHomePage extends StatefulWidget {
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var colorScheme = Theme.of(context).colorScheme;
-
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        if (appState.url == '') {
-          appState.url = defaultUrl;
-        }
-        page = RequesterPage();
-        break;
-      case 1:
-        appState.token = '';
-        appState.response = 'Waiting for request...';
-        appState.url = '';
-        page = LoginPage();
-        break;
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
-
-    // The container for the current page, with its background color
-    // and subtle switching animation.
-    var mainArea = ColoredBox(
-      color: colorScheme.surfaceVariant,
-      child: AnimatedSwitcher(
-        duration: Duration(milliseconds: 200),
-        child: page,
-      ),
-    );
-    // Check if the current page is the login page
-    var isLoginPage = page is LoginPage;
-
-    // Conditionally render the navbar
-    var sidebar = isLoginPage
-        ? null
-        : BottomAppBar(
-            child: BottomNavigationBar(
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.logout),
-                  label: 'Logout',
-                ),
-              ],
-              currentIndex: selectedIndex,
-              onTap: (value) {
-                setState(() {
-                  selectedIndex = value;
-                });
-              },
-            ),
-          );
-
-    return Scaffold(
-      body: Row(
-        children: [
-          //Container(child: sidebar),
-          Expanded(child: mainArea),
-        ],
-      ),
-      bottomNavigationBar: sidebar,
-    );
-  }
-}
-
-class RequesterPage extends StatelessWidget {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Timer debounce = Timer(Duration(milliseconds: 0), () {});
@@ -207,7 +127,7 @@ class RequesterPage extends StatelessWidget {
                     'Example:\n'
                     'body.content would return "a profound quote" from the JSON below\n\n'
                     '{ "content": "a profound quote" }',
-                constraints: BoxConstraints(maxWidth: 400),
+                constraints: BoxConstraints(maxWidth: 350),
                 helperMaxLines: 10,
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -215,13 +135,19 @@ class RequesterPage extends StatelessWidget {
                 border: OutlineInputBorder(gapPadding: 2),
               ),
             ),
-            Switch(
-              activeColor: Theme.of(context).colorScheme.primary,
-              value: appState.recurring,
-              onChanged: (bool value) {
-                appState.updateRecurringState(value);
-              },
-            )
+            SizedBox(width: 20),
+            Column(
+              children: [
+                Text('Recurring'),
+                Switch(
+                  activeColor: Theme.of(context).colorScheme.primary,
+                  value: appState.recurring,
+                  onChanged: (bool value) {
+                    appState.updateRecurringState(value);
+                  },
+                )
+              ],
+            ),
           ],
         ),
         SizedBox(height: 30),

@@ -8,12 +8,6 @@ class LoginPage extends StatelessWidget {
   // login button widget
   Widget loginButton(BuildContext context) {
     return ElevatedButton(
-      style: ButtonStyle(
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        )),
-        minimumSize: MaterialStateProperty.all(Size(400, 100)),
-      ),
       onPressed: () {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => PageLoader()),
@@ -43,28 +37,31 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Eagler',
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
-            SizedBox(height: 20),
-            SizedBox(height: 20),
-            tokenInput(context),
-            SizedBox(height: 20),
-            loginButton(context),
-            SizedBox(height: 30),
-            SizedBox(
-              width: 400,
-              child: Text(
-                  'Eagler can make an API request for you. You can provide '
-                  'a bearer token if you need to. Or just press the button to '
-                  'continue'),
-            ),
-          ],
+      body: Container(
+        padding: EdgeInsets.all(20),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Eagler',
+                style: Theme.of(context).textTheme.displayLarge,
+              ),
+              SizedBox(height: 20),
+              SizedBox(height: 20),
+              tokenInput(context),
+              SizedBox(height: 20),
+              loginButton(context),
+              SizedBox(height: 30),
+              SizedBox(
+                width: 400,
+                child: Text(
+                    'Eagler can make an API request for you. You can provide '
+                    'a bearer token if you need to. Or just press the button to '
+                    'continue'),
+              ),
+            ],
+          ),
         ),
       ),
     );

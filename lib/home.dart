@@ -46,9 +46,6 @@ class HomePage extends StatelessWidget {
         ),
         SizedBox(height: 30),
         ElevatedButton(
-          style: ButtonStyle(
-            minimumSize: MaterialStateProperty.all(Size(400, 100)),
-          ),
           onPressed: () async {
             makeRequest(appState);
           },

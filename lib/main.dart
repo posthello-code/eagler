@@ -22,6 +22,13 @@ class App extends StatelessWidget {
       child: MaterialApp(
         title: 'Eagler App',
         theme: ThemeData(
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            minimumSize: Size(400, 100),
+          )),
           useMaterial3: false,
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.deepPurple,

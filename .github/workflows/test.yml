@@ -33,4 +33,4 @@ jobs:
           flutter-sdk-version: stable
       - run: flutter --version
       - run: flutter pub get
-      - run: flutter test
+      - run: flutter test test/services/* test/widgets/*

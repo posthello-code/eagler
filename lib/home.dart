@@ -61,43 +61,46 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              onEditingComplete: () => {},
-              onChanged: (value) {
-                debounce.cancel();
-                debounce = Timer(Duration(milliseconds: delayTime), () {
-                  if (value.endsWith('.') ||
-                      value.contains(' ') ||
-                      value.endsWith(' ')) {
-                    appState.updatePathValidatorText('Invalid path');
-                  } else if (!value.split('.')[0].contains('body') ||
-                      !(value.split('.')[0].contains('body'))) {
-                    appState
-                        .updatePathValidatorText('Must begin with "body" or '
-                            '"body[i]"');
-                  } else {
-                    appState.extractorPath = value;
-                    appState.updatePathValidatorText('');
-                  }
-                });
-              },
-              maxLines: 1,
-              decoration: InputDecoration(
-                errorText: appState.pathValidatorString.isNotEmpty
-                    ? appState.pathValidatorString
-                    : null,
-                errorMaxLines: 5,
-                helperText: 'Default: ${jsonEncode(defaultExtractorPath)}'
-                    '\n\n'
-                    'Example:\n'
-                    'body.content would return "a profound quote" from the JSON below\n\n'
-                    '{ "content": "a profound quote" }',
-                constraints: BoxConstraints(maxWidth: 350),
-                helperMaxLines: 10,
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                labelText: 'Extractor Path',
-                border: OutlineInputBorder(gapPadding: 2),
+            Flexible(
+              fit: FlexFit.loose,
+              child: TextField(
+                onEditingComplete: () => {},
+                onChanged: (value) {
+                  debounce.cancel();
+                  debounce = Timer(Duration(milliseconds: delayTime), () {
+                    if (value.endsWith('.') ||
+                        value.contains(' ') ||
+                        value.endsWith(' ')) {
+                      appState.updatePathValidatorText('Invalid path');
+                    } else if (!value.split('.')[0].contains('body') ||
+                        !(value.split('.')[0].contains('body'))) {
+                      appState
+                          .updatePathValidatorText('Must begin with "body" or '
+                              '"body[i]"');
+                    } else {
+                      appState.extractorPath = value;
+                      appState.updatePathValidatorText('');
+                    }
+                  });
+                },
+                maxLines: 1,
+                decoration: InputDecoration(
+                  errorText: appState.pathValidatorString.isNotEmpty
+                      ? appState.pathValidatorString
+                      : null,
+                  errorMaxLines: 5,
+                  helperText: 'Default: ${jsonEncode(defaultExtractorPath)}'
+                      '\n\n'
+                      'Example:\n'
+                      'body.content would return "a profound quote" from the JSON below\n\n'
+                      '{ "content": "a profound quote" }',
+                  constraints: BoxConstraints(maxWidth: 350),
+                  helperMaxLines: 10,
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                  labelText: 'Extractor Path',
+                  border: OutlineInputBorder(gapPadding: 2),
+                ),
               ),
             ),
             SizedBox(width: 5),
@@ -149,6 +152,12 @@ class HomePage extends StatelessWidget {
       ]),
     );
 
-    return Container(child: content);
+    return Center(
+      child: SingleChildScrollView(
+          child: Container(
+        padding: EdgeInsets.all(20),
+        child: content,
+      )),
+    );
   }
 }

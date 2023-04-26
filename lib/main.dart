@@ -1,4 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'dart:async';
+
+import 'package:eagler/services/request_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'login.dart';
@@ -37,8 +40,21 @@ class MyAppState extends ChangeNotifier {
   String response = '';
   String pathValidatorString = '';
   bool recurring = false;
+  Timer? task;
 
-  void updateRecurringState(bool state) {
+  void startRequestTimer(appState) {
+    task = Timer.periodic(Duration(seconds: 60), (timer) async {
+      makeRequest(appState);
+    });
+  }
+
+  void updateRecurringState(bool state, appState) {
+    if (state) {
+      startRequestTimer(appState);
+    } else {
+      task?.cancel();
+    }
+
     recurring = state;
     notifyListeners();
   }

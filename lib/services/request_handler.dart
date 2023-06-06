@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:eagler/services/response_extractor.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
-makeRequest(appState) async {
+makeRequest(appState, context) async {
   dynamic extractedValue;
   try {
     Response response;
@@ -28,6 +29,18 @@ makeRequest(appState) async {
         appState.updateResponseText(
             'The parser could not find a value for the path:\n\n'
             '${jsonEncode(appState.extractorPath)}');
+      }
+
+      if (appState.condition.toString() == '>' &&
+          int.tryParse(appState.response) is int &&
+          int.parse(appState.response) > appState.conditionThresholdValue) {
+        const snackBar = SnackBar(
+          content: Text('Condition was met!'),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+        print('condition met');
       }
     } else {
       appState.updateResponseText(response.body);

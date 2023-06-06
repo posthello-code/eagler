@@ -22,6 +22,25 @@ class App extends StatelessWidget {
       child: MaterialApp(
         title: 'Eagler App',
         theme: ThemeData(
+          inputDecorationTheme: InputDecorationTheme(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            isDense: true,
+            labelStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 12,
+            ),
+            floatingLabelAlignment: FloatingLabelAlignment.start,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+          ),
+          dropdownMenuTheme: DropdownMenuThemeData(
+            textStyle: TextStyle(
+              height: 1.6,
+              color: Colors.black,
+              fontSize: 12,
+            ),
+          ),
           elevatedButtonTheme: ElevatedButtonThemeData(
               style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
@@ -49,15 +68,18 @@ class MyAppState extends ChangeNotifier {
   bool recurring = false;
   Timer? task;
 
-  void startRequestTimer(appState) {
+  String condition = '0';
+  int conditionThresholdValue = 0;
+
+  void startRequestTimer(appState, context) {
     task = Timer.periodic(Duration(seconds: 60), (timer) async {
-      makeRequest(appState);
+      makeRequest(appState, context);
     });
   }
 
-  void updateRecurringState(bool state, appState) {
+  void updateRecurringState(bool state, appState, context) {
     if (state) {
-      startRequestTimer(appState);
+      startRequestTimer(appState, context);
     } else {
       task?.cancel();
     }
@@ -79,6 +101,11 @@ class MyAppState extends ChangeNotifier {
               'response was limited to 1000 characters';
     }
     this.response = response.toString();
+    notifyListeners();
+  }
+
+  updateCondition(String newCondition) {
+    condition = newCondition;
     notifyListeners();
   }
 }

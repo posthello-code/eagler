@@ -42,13 +42,13 @@ class HomePage extends StatelessWidget {
             constraints: BoxConstraints(maxWidth: 400),
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             labelText: 'Http URL',
-            border: OutlineInputBorder(gapPadding: 2),
+            border: Theme.of(context).inputDecorationTheme.border,
           ),
         ),
         SizedBox(height: 30),
         ElevatedButton(
           onPressed: () async {
-            makeRequest(appState);
+            makeRequest(appState, context);
           },
           child: Text('Send'),
         ),
@@ -97,8 +97,29 @@ class HomePage extends StatelessWidget {
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   labelText: 'Extractor Path',
-                  border: OutlineInputBorder(gapPadding: 2),
+                  border: Theme.of(context).inputDecorationTheme.border,
                 ),
+              ),
+            ),
+            SizedBox(width: 10),
+            ConditionDropdownMenu(),
+            SizedBox(width: 10),
+            TextField(
+              onChanged: (value) {
+                if (value != '') {
+                  appState.conditionThresholdValue = int.parse(value);
+                } else {
+                  appState.conditionThresholdValue = 0;
+                }
+              },
+              maxLines: 1,
+              decoration: InputDecoration(
+                hintText: '0',
+                constraints: BoxConstraints(maxWidth: 75),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                labelText: 'Threshold',
+                border: Theme.of(context).inputDecorationTheme.border,
               ),
             ),
             SizedBox(width: 5),
@@ -109,7 +130,7 @@ class HomePage extends StatelessWidget {
                   activeColor: Theme.of(context).colorScheme.primary,
                   value: appState.recurring,
                   onChanged: (bool value) {
-                    appState.updateRecurringState(value, appState);
+                    appState.updateRecurringState(value, appState, context);
                   },
                 ),
               ],
@@ -156,6 +177,35 @@ class HomePage extends StatelessWidget {
         padding: EdgeInsets.all(20),
         child: content,
       )),
+    );
+  }
+}
+
+class ConditionDropdownMenu extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
+    return Flexible(
+      fit: FlexFit.loose,
+      child: DropdownMenu(
+        trailingIcon: Icon(Icons.arrow_drop_down, size: 15),
+        inputDecorationTheme: Theme.of(context).inputDecorationTheme,
+        label: Text('Condition', style: TextStyle()),
+        width: 75,
+        dropdownMenuEntries: [
+          DropdownMenuEntry(value: '0', label: ' ', enabled: true),
+          DropdownMenuEntry(value: '>', label: '>', enabled: true),
+          DropdownMenuEntry(value: '<', label: '<', enabled: false),
+          DropdownMenuEntry(value: '=', label: '=', enabled: false),
+          DropdownMenuEntry(
+              value: 'includes', label: 'includes', enabled: false)
+        ],
+        menuStyle: Theme.of(context).dropdownMenuTheme.menuStyle,
+        onSelected: (label) => {
+          appState.updateCondition(label.toString()),
+        },
+      ),
     );
   }
 }

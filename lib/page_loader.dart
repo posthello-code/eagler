@@ -73,6 +73,9 @@ class _PageLoaderState extends State<PageLoader> {
           );
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Eagler'),
+      ),
       body: Row(
         children: [
           Expanded(child: mainArea),

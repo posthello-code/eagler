@@ -16,6 +16,7 @@ class HomePage extends StatelessWidget {
 
     var content = Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(height: 40),
         Text('Welcome to Eagler!',
             style: Theme.of(context).textTheme.headlineMedium),
         SizedBox(height: 20),

@@ -36,11 +36,16 @@ makeRequest(appState, context) async {
           int.parse(appState.response) > appState.conditionThresholdValue) {
         const snackBar = SnackBar(
           content: Text('Condition was met!'),
+          backgroundColor: Colors.red,
         );
 
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        const snackBar = SnackBar(
+          content: Text('Requested new data, alert condition not met'),
+        );
 
-        print('condition met');
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } else {
       appState.updateResponseText(response.body);

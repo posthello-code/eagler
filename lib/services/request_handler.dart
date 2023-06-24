@@ -33,8 +33,8 @@ makeRequest(appState, context) async {
       }
 
       if (appState.condition.toString() == '>' &&
-          int.tryParse(appState.response) is int &&
-          int.parse(appState.response) > appState.conditionThresholdValue) {
+          double.tryParse(appState.response) is double &&
+          double.parse(appState.response) > appState.conditionThresholdValue) {
         String alertMsg = 'Alert condition triggered!';
         SnackBar snackBar = SnackBar(
           content: Text(alertMsg),

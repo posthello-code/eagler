@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'services/local_notifications.dart' as local_notifications;
 
 import 'home.dart';
 import 'login.dart';
@@ -16,6 +17,8 @@ class _PageLoaderState extends State<PageLoader> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    local_notifications.initialize();
+
     var colorScheme = Theme.of(context).colorScheme;
 
     Widget page;

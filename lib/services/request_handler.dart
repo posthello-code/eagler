@@ -4,6 +4,7 @@ import 'package:eagler/services/response_extractor.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'local_notifications.dart' as local_notifications;
 
 makeRequest(appState, context) async {
   dynamic extractedValue;
@@ -34,13 +35,17 @@ makeRequest(appState, context) async {
       if (appState.condition.toString() == '>' &&
           int.tryParse(appState.response) is int &&
           int.parse(appState.response) > appState.conditionThresholdValue) {
-        const snackBar = SnackBar(
-          content: Text('Condition was met!'),
+        String alertMsg = 'Alert condition triggered!';
+        SnackBar snackBar = SnackBar(
+          content: Text(alertMsg),
         );
-
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-        print('condition met');
+        local_notifications.send(alertMsg);
+      } else {
+        SnackBar snackBar = SnackBar(
+          content: Text('Requested new data, alert condition not met'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } else {
       appState.updateResponseText(response.body);

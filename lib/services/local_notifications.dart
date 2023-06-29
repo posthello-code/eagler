@@ -6,8 +6,11 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 initialize() async {
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
+  const DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings();
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
+    macOS: initializationSettingsDarwin,
   );
   flutterLocalNotificationsPlugin.initialize(initializationSettings);
   flutterLocalNotificationsPlugin

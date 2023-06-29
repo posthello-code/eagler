@@ -1,7 +1,6 @@
 //Login page for the app
 import 'package:eagler/main.dart';
 import 'package:eagler/page_loader.dart';
-import 'package:eagler/services/shared_prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,7 +42,7 @@ class LoginPage extends StatelessWidget {
   }
 
   initializeData() async {
-    prefs = await getPrefs();
+    prefs = await SharedPreferences.getInstance();
     print(prefs?.getString('token'));
   }
 

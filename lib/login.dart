@@ -7,13 +7,17 @@ import 'package:provider/provider.dart';
 class LoginPage extends StatelessWidget {
   // login button widget
   Widget loginButton(BuildContext context) {
-    return ElevatedButton(
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: ElevatedButton(
+        style: Theme.of(context).elevatedButtonTheme.style,
       onPressed: () {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => PageLoader()),
         );
       },
       child: Text('Login'),
+      ),
     );
   }
 
@@ -50,13 +54,16 @@ class LoginPage extends StatelessWidget {
             SizedBox(height: 20),
             loginButton(context),
             SizedBox(height: 30),
-            SizedBox(
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: SizedBox(
               width: 400,
               child: Text(
                   'Eagler can make an API request for you. You can provide '
                   'a bearer token if you need to. Or just press the button to '
                   'continue'),
             ),
+                      ),
           ],
         ),
       ),

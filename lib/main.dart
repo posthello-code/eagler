@@ -72,7 +72,7 @@ class MyAppState extends ChangeNotifier {
   Timer? task;
 
   String condition = '0';
-  int conditionThresholdValue = 0;
+  dynamic conditionThresholdValue = 0;
 
   void startRequestTimer(appState, context) {
     task = Timer.periodic(Duration(seconds: 60), (timer) async {

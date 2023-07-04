@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:eagler/services/request_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 
 String defaultExtractorPath = 'body.content';
@@ -60,6 +61,8 @@ class App extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
+  late SharedPreferences? prefs;
+  String defaultUrl = 'https://api.quotable.io/random';
   String token = '';
   String url = '';
   String extractorPath = defaultExtractorPath;
@@ -69,7 +72,7 @@ class MyAppState extends ChangeNotifier {
   Timer? task;
 
   String condition = '0';
-  int conditionThresholdValue = 0;
+  dynamic conditionThresholdValue = 0;
 
   void startRequestTimer(appState, context) {
     task = Timer.periodic(Duration(seconds: 60), (timer) async {
@@ -107,5 +110,13 @@ class MyAppState extends ChangeNotifier {
   updateCondition(String newCondition) {
     condition = newCondition;
     notifyListeners();
+  }
+
+  initializeData() async {
+    prefs = await SharedPreferences.getInstance();
+
+    prefs?.getString('url') ?? prefs?.setString('url', defaultUrl);
+    prefs?.getString('extractorPath') ??
+        prefs?.setString('extractorPath', defaultExtractorPath);
   }
 }

@@ -3,10 +3,8 @@ import 'package:eagler/main.dart';
 import 'package:eagler/page_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
-  late final SharedPreferences? prefs;
   // login button widget
   Widget loginButton(BuildContext context) {
     return Container(
@@ -26,10 +24,9 @@ class LoginPage extends StatelessWidget {
   Widget tokenInput(BuildContext context) {
     var appState = context.watch<MyAppState>();
     return TextFormField(
-      initialValue: prefs?.getString('token'),
+      initialValue: appState.prefs?.getString('token'),
       onChanged: (value) async {
-        prefs?.setString('token', value);
-        print(prefs?.getString('token'));
+        appState.prefs?.setString('token', value);
         appState.token = value;
       },
       decoration: InputDecoration(
@@ -41,16 +38,12 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  initializeData() async {
-    prefs = await SharedPreferences.getInstance();
-    print(prefs?.getString('token'));
-  }
-
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     return Scaffold(
       body: FutureBuilder(
-          future: initializeData(),
+          future: appState.initializeData(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(

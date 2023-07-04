@@ -8,19 +8,25 @@ import 'local_notifications.dart' as local_notifications;
 
 makeRequest(appState, context) async {
   dynamic extractedValue;
+  String url = appState.prefs?.getString('url');
+  String token = appState.prefs?.getString('token');
+  String extractorPath = appState.prefs?.getString('extractorPath');
+
   try {
     Response response;
-    if (appState.token != '') {
-      response = await http.get(Uri.parse(appState.url), headers: {
-        "Authorization": 'Bearer ${appState.token}',
+    if (appState.prefs?.getString('token') != '') {
+      response = await http.get(Uri.parse(url), headers: {
+        "Authorization": 'Bearer $token',
       });
     } else {
-      response = await http.get(Uri.parse(appState.url));
+      response = await http.get(Uri.parse(url));
     }
 
     if (response.statusCode == 200) {
-      extractedValue =
-          extractValueFromResponse(response, appState.extractorPath);
+      extractedValue = extractValueFromResponse(
+        response,
+        extractorPath,
+      );
 
       if (extractedValue is String || extractedValue is num) {
         appState.updateResponseText(extractedValue);
@@ -29,7 +35,7 @@ makeRequest(appState, context) async {
       } else {
         appState.updateResponseText(
             'The parser could not find a value for the path:\n\n'
-            '${jsonEncode(appState.extractorPath)}');
+            '${jsonEncode(extractorPath)}');
       }
 
       if (appState.condition.toString() == '>' &&

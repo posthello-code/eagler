@@ -21,8 +21,8 @@ initialize() async {
 
 send(message) async {
   const AndroidNotificationDetails androidNotificationDetails =
-      AndroidNotificationDetails('your channel id', 'your channel name',
-          channelDescription: 'your channel description',
+      AndroidNotificationDetails('Eagler notification', 'Eagler notification',
+          channelDescription: 'the alert condition was triggered',
           importance: Importance.max,
           priority: Priority.high,
           ticker: 'ticker');

@@ -32,14 +32,14 @@ class HomePage extends StatelessWidget {
         TextField(
           onChanged: (value) {
             if (value != '') {
-              appState.url = 'https://$value';
+              appState.prefs?.setString('url', value);
             } else {
-              appState.url = defaultUrl;
+              appState.prefs?.setString('url', defaultUrl);
             }
           },
           maxLines: 3,
           decoration: InputDecoration(
-            prefixText: 'https://',
+            hintText: appState.prefs?.getString('url'),
             helperText: 'Default: $defaultUrl',
             constraints: BoxConstraints(maxWidth: 400),
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -78,13 +78,14 @@ class HomePage extends StatelessWidget {
                           .updatePathValidatorText('Must begin with "body" or '
                               '"body[i]"');
                     } else {
-                      appState.extractorPath = value;
+                      appState.prefs?.setString('extractorPath', value);
                       appState.updatePathValidatorText('');
                     }
                   });
                 },
                 maxLines: 1,
                 decoration: InputDecoration(
+                  hintText: appState.prefs?.getString('extractorPath'),
                   errorText: appState.pathValidatorString.isNotEmpty
                       ? appState.pathValidatorString
                       : null,
@@ -160,7 +161,7 @@ class HomePage extends StatelessWidget {
               children: [
                 Container(
                     alignment: Alignment.centerLeft,
-                    child: Text('URL:\n\n${appState.url}')),
+                    child: Text('URL:\n\n${appState.prefs?.getString('url')}')),
                 SizedBox(height: 20),
                 Container(
                     alignment: Alignment.centerLeft,

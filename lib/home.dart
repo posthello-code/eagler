@@ -109,8 +109,12 @@ class HomePage extends StatelessWidget {
             SizedBox(width: 10),
             TextField(
               onChanged: (value) {
-                if (value != '') {
+                if (value != '' && int.tryParse(value) is int) {
                   appState.conditionThresholdValue = int.parse(value);
+                } else if (value != '' && double.tryParse(value) is double) {
+                  appState.conditionThresholdValue = double.parse(value);
+                } else if (value != '') {
+                  appState.conditionThresholdValue = value;
                 } else {
                   appState.conditionThresholdValue = 0;
                 }
@@ -199,10 +203,9 @@ class ConditionDropdownMenu extends StatelessWidget {
         dropdownMenuEntries: [
           DropdownMenuEntry(value: '0', label: ' ', enabled: true),
           DropdownMenuEntry(value: '>', label: '>', enabled: true),
-          DropdownMenuEntry(value: '<', label: '<', enabled: false),
-          DropdownMenuEntry(value: '=', label: '=', enabled: false),
-          DropdownMenuEntry(
-              value: 'includes', label: 'includes', enabled: false)
+          DropdownMenuEntry(value: '<', label: '<', enabled: true),
+          DropdownMenuEntry(value: '=', label: '=', enabled: true),
+          DropdownMenuEntry(value: 'includes', label: 'includes', enabled: true)
         ],
         menuStyle: Theme.of(context).dropdownMenuTheme.menuStyle,
         onSelected: (label) => {

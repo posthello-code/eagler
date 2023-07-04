@@ -6,6 +6,15 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'local_notifications.dart' as local_notifications;
 
+triggerAlert(context) {
+  String alertMsg = 'Alert condition triggered!';
+  SnackBar snackBar = SnackBar(
+    content: Text(alertMsg),
+  );
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  local_notifications.send(alertMsg);
+}
+
 makeRequest(appState, context) async {
   dynamic extractedValue;
   String url = appState.prefs?.getString('url');
@@ -41,12 +50,21 @@ makeRequest(appState, context) async {
       if (appState.condition.toString() == '>' &&
           double.tryParse(appState.response) is double &&
           double.parse(appState.response) > appState.conditionThresholdValue) {
-        String alertMsg = 'Alert condition triggered!';
-        SnackBar snackBar = SnackBar(
-          content: Text(alertMsg),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        local_notifications.send(alertMsg);
+        triggerAlert(context);
+      } else if (appState.condition.toString() == '<' &&
+          double.tryParse(appState.response) is double &&
+          double.parse(appState.response) < appState.conditionThresholdValue) {
+        triggerAlert(context);
+      } else if (appState.condition.toString() == '=' &&
+          appState.response.toString() ==
+              appState.conditionThresholdValue.toString()) {
+        print('equal');
+        triggerAlert(context);
+      } else if (appState.condition.toString() == 'includes' &&
+          appState.response
+              .toString()
+              .contains(appState.conditionThresholdValue.toString())) {
+        triggerAlert(context);
       } else {
         SnackBar snackBar = SnackBar(
           content: Text('Requested new data, alert condition not met'),

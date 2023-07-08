@@ -1,4 +1,4 @@
-package com.example.eagler
+package com.posthello.eagler
 
 import io.flutter.embedding.android.FlutterActivity
 

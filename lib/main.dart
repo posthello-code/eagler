@@ -1,15 +1,27 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'dart:async';
+import 'dart:isolate';
+import 'dart:ui';
 
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:eagler/services/request_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 
-String defaultExtractorPath = 'body.content';
+const String defaultExtractorPath = 'body.content';
 
-void main() {
+@pragma('vm:entry-point')
+backgroundAlarmCallback() {
+  print('background alarms started');
+  SendPort? uiSendPort = IsolateNameServer.lookupPortByName('notify');
+  uiSendPort?.send(null);
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(App());
 }
 
@@ -61,6 +73,7 @@ class App extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
+  static SendPort? uiSendPort;
   late SharedPreferences? prefs;
   String defaultUrl = 'https://api.quotable.io/random';
   String token = '';
@@ -70,19 +83,34 @@ class MyAppState extends ChangeNotifier {
   String pathValidatorString = '';
   bool recurring = false;
   Timer? task;
-
   String condition = '0';
   dynamic conditionThresholdValue = 0;
 
-  void startRequestTimer(appState, context) {
-    task = Timer.periodic(Duration(seconds: 60), (timer) async {
+  startRequestTimer(appState, context) async {
+    print('starting alarm timer');
+
+    await AndroidAlarmManager.periodic(
+      Duration(seconds: 10),
+      0,
+      backgroundAlarmCallback,
+      wakeup: true,
+      rescheduleOnReboot: true,
+      allowWhileIdle: true,
+    );
+
+    // Create port to receive messages from alarm timer isolate
+    ReceivePort rcPort = ReceivePort();
+    IsolateNameServer.registerPortWithName(rcPort.sendPort, 'notify');
+
+    rcPort.listen((v) {
+      print('alarm triggered in the background');
       makeRequest(appState, context);
     });
   }
 
-  void updateRecurringState(bool state, appState, context) {
+  void updateRecurringState(bool state, appState, context) async {
     if (state) {
-      startRequestTimer(appState, context);
+      await startRequestTimer(appState, context);
     } else {
       task?.cancel();
     }
@@ -113,10 +141,12 @@ class MyAppState extends ChangeNotifier {
   }
 
   initializeData() async {
-    prefs = await SharedPreferences.getInstance();
+    AndroidAlarmManager.initialize();
 
+    prefs = await SharedPreferences.getInstance();
     prefs?.getString('url') ?? prefs?.setString('url', defaultUrl);
     prefs?.getString('extractorPath') ??
         prefs?.setString('extractorPath', defaultExtractorPath);
+    prefs?.getString('token') ?? prefs?.setString('token', "");
   }
 }

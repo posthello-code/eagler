@@ -73,7 +73,6 @@ class App extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  static SendPort? uiSendPort;
   late SharedPreferences? prefs;
   String defaultUrl = 'https://api.quotable.io/random';
   String token = '';
@@ -101,9 +100,9 @@ class MyAppState extends ChangeNotifier {
     });
   }
 
-  void updateRecurringState(bool state, appState, context) async {
+  void updateRecurringState(bool state, appState, context) {
     if (state) {
-      await startRequestTimer(appState, context);
+      startRequestTimer(appState, context);
     } else {
       AndroidAlarmManager.cancel(0);
     }

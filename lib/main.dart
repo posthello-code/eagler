@@ -3,11 +3,10 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
-
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:eagler/services/request_handler.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
@@ -88,7 +87,15 @@ class MyAppState extends ChangeNotifier {
   dynamic conditionThresholdValue = 0;
 
   startRequestTimer(appState, context) async {
-    if (Platform.isAndroid) {
+    defaultTimer() {
+      task = Timer.periodic(Duration(seconds: 60), (timer) {
+        makeRequest(appState, context);
+      });
+    }
+
+    if (kIsWeb) {
+      defaultTimer();
+    } else if (Platform.isAndroid) {
       AndroidAlarmManager.periodic(
           Duration(seconds: 60), 0, backgroundAlarmCallback,
           wakeup: true, rescheduleOnReboot: true, allowWhileIdle: true);
@@ -102,9 +109,7 @@ class MyAppState extends ChangeNotifier {
         makeRequest(appState, context);
       });
     } else {
-      task = Timer.periodic(Duration(seconds: 60), (timer) {
-        makeRequest(appState, context);
-      });
+      defaultTimer();
     }
   }
 

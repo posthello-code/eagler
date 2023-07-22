@@ -58,7 +58,6 @@ makeRequest(appState, context) async {
       } else if (appState.condition.toString() == '=' &&
           appState.response.toString() ==
               appState.conditionThresholdValue.toString()) {
-        print('equal');
         triggerAlert(context);
       } else if (appState.condition.toString() == 'includes' &&
           appState.response

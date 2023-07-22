@@ -14,7 +14,7 @@ const String defaultExtractorPath = 'body.content';
 
 @pragma('vm:entry-point')
 backgroundAlarmCallback() {
-  print('background alarms started');
+  // push notification to UI from background isolate
   SendPort? uiSendPort = IsolateNameServer.lookupPortByName('notify');
   uiSendPort?.send(null);
 }
@@ -87,8 +87,6 @@ class MyAppState extends ChangeNotifier {
   dynamic conditionThresholdValue = 0;
 
   startRequestTimer(appState, context) async {
-    print('starting alarm timer');
-
     await AndroidAlarmManager.periodic(
         Duration(seconds: 60), 0, backgroundAlarmCallback,
         wakeup: true, rescheduleOnReboot: true, allowWhileIdle: true);
@@ -98,7 +96,7 @@ class MyAppState extends ChangeNotifier {
     IsolateNameServer.registerPortWithName(rcPort.sendPort, 'notify');
 
     rcPort.listen((v) {
-      print('alarm triggered in the background');
+      // listen for background alarm timer isolate messages
       makeRequest(appState, context);
     });
   }

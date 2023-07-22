@@ -1,11 +1,13 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:eagler/services/request_handler.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
@@ -86,25 +88,35 @@ class MyAppState extends ChangeNotifier {
   dynamic conditionThresholdValue = 0;
 
   startRequestTimer(appState, context) async {
-    await AndroidAlarmManager.periodic(
-        Duration(seconds: 60), 0, backgroundAlarmCallback,
-        wakeup: true, rescheduleOnReboot: true, allowWhileIdle: true);
+    if (Platform.isAndroid) {
+      AndroidAlarmManager.periodic(
+          Duration(seconds: 60), 0, backgroundAlarmCallback,
+          wakeup: true, rescheduleOnReboot: true, allowWhileIdle: true);
 
-    // Create port to receive messages from alarm timer isolate
-    ReceivePort rcPort = ReceivePort();
-    IsolateNameServer.registerPortWithName(rcPort.sendPort, 'notify');
+      // Create port to receive messages from alarm timer isolate
+      ReceivePort rcPort = ReceivePort();
+      IsolateNameServer.registerPortWithName(rcPort.sendPort, 'notify');
 
-    rcPort.listen((v) {
-      // listen for background alarm timer isolate messages
-      makeRequest(appState, context);
-    });
+      rcPort.listen((v) {
+        // listen for background alarm timer isolate messages
+        makeRequest(appState, context);
+      });
+    } else {
+      task = Timer.periodic(Duration(seconds: 60), (timer) {
+        makeRequest(appState, context);
+      });
+    }
   }
 
   void updateRecurringState(bool state, appState, context) {
     if (state) {
       startRequestTimer(appState, context);
     } else {
-      AndroidAlarmManager.cancel(0);
+      if (Platform.isAndroid) {
+        AndroidAlarmManager.cancel(0);
+      } else {
+        task?.cancel();
+      }
     }
 
     recurring = state;

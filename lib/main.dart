@@ -90,13 +90,8 @@ class MyAppState extends ChangeNotifier {
     print('starting alarm timer');
 
     await AndroidAlarmManager.periodic(
-      Duration(seconds: 10),
-      0,
-      backgroundAlarmCallback,
-      wakeup: true,
-      rescheduleOnReboot: true,
-      allowWhileIdle: true,
-    );
+        Duration(seconds: 60), 0, backgroundAlarmCallback,
+        wakeup: true, rescheduleOnReboot: true, allowWhileIdle: true);
 
     // Create port to receive messages from alarm timer isolate
     ReceivePort rcPort = ReceivePort();
@@ -112,7 +107,7 @@ class MyAppState extends ChangeNotifier {
     if (state) {
       await startRequestTimer(appState, context);
     } else {
-      task?.cancel();
+      AndroidAlarmManager.cancel(0);
     }
 
     recurring = state;

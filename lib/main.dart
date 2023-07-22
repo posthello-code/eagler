@@ -94,6 +94,7 @@ class MyAppState extends ChangeNotifier {
     }
 
     if (kIsWeb) {
+      // dumb thing to fix bug where isPlatform doesn't work on web
       defaultTimer();
     } else if (Platform.isAndroid) {
       AndroidAlarmManager.periodic(
@@ -117,7 +118,10 @@ class MyAppState extends ChangeNotifier {
     if (state) {
       startRequestTimer(appState, context);
     } else {
-      if (Platform.isAndroid) {
+      if (kIsWeb) {
+        // dumb thing to fix bug where isPlatform doesn't work on web
+        task?.cancel();
+      } else if (Platform.isAndroid) {
         AndroidAlarmManager.cancel(0);
       } else {
         task?.cancel();

@@ -11,6 +11,7 @@ triggerAlert(context) {
   SnackBar snackBar = SnackBar(
     content: Text(alertMsg),
   );
+  ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
   local_notifications.send(alertMsg);
 }

@@ -9,7 +9,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:eagler/main.dart'; */
 void main() {
-  // TODO: Figure out how to get this working with shared prefs
+  // TODO: Figure out how to get this working with shared prefs, need to mock it?
 
   /* testWidgets('there should be a login button', (WidgetTester tester) async {
     // Build our app and trigger a frame.

@@ -69,6 +69,7 @@ makeRequest(appState, context) async {
         SnackBar snackBar = SnackBar(
           content: Text('Requested new data, alert condition not met'),
         );
+        ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } else {

@@ -14,7 +14,7 @@ dependencies:
   provider: ^6.0.0
   http: ^1.1.0
   test: ^1.22.0
-  shared_preferences: ^2.2.0
+  shared_preferences: ^2.2.1
   flutter_local_notifications: ^15.1.0+1
   flutter_launcher_icons: ^0.13.1
   android_alarm_manager_plus: ^3.0.1

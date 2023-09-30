@@ -3,7 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-initialize() async {
+initialize() {
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
   const DarwinInitializationSettings initializationSettingsDarwin =
@@ -19,7 +19,7 @@ initialize() async {
       ?.requestPermission();
 }
 
-send(message) async {
+send(message) {
   const AndroidNotificationDetails androidNotificationDetails =
       AndroidNotificationDetails('Eagler notification', 'Eagler notification',
           channelDescription: 'the alert condition was triggered',
@@ -28,7 +28,7 @@ send(message) async {
           ticker: 'ticker');
   const NotificationDetails notificationDetails =
       NotificationDetails(android: androidNotificationDetails);
-  await flutterLocalNotificationsPlugin.show(
+  flutterLocalNotificationsPlugin.show(
       0, 'Eagler Alerting', message, notificationDetails,
       payload: 'item x');
 }

@@ -75,16 +75,16 @@ class App extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   late SharedPreferences? prefs;
+  late bool recurring;
+  late String condition;
   String defaultUrl = 'https://api.quotable.io/random';
   String token = '';
   String url = '';
   String extractorPath = defaultExtractorPath;
   String response = '';
   String pathValidatorString = '';
-  bool recurring = false;
   Timer? task;
-  String condition = '0';
-  dynamic conditionThresholdValue = 0;
+  dynamic conditionThresholdValue; // int or double
 
   startRequestTimer(appState, context) async {
     defaultTimer() {
@@ -155,11 +155,17 @@ class MyAppState extends ChangeNotifier {
 
   initializeData() async {
     AndroidAlarmManager.initialize();
-
     prefs = await SharedPreferences.getInstance();
     prefs?.getString('url') ?? prefs?.setString('url', defaultUrl);
     prefs?.getString('extractorPath') ??
         prefs?.setString('extractorPath', defaultExtractorPath);
-    prefs?.getString('token') ?? prefs?.setString('token', "");
+    prefs?.getString('token') ?? prefs?.setString('token', ' ');
+    prefs?.getString('condition') ?? prefs?.setString('condition', ' ');
+    prefs?.getBool('recurring') ?? prefs?.setBool('recurring', false);
+    prefs?.getDouble('threshold') ?? prefs?.setDouble('threshold', 0);
+
+    condition = prefs!.getString('condition')!;
+    conditionThresholdValue = prefs!.getDouble('threshold')!;
+    recurring = prefs!.getBool('recurring')!;
   }
 }

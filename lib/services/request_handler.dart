@@ -5,15 +5,33 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'local_notifications.dart' as local_notifications;
+import 'package:flutter/foundation.dart' show kIsWeb;
+// ignore: avoid_web_libraries_in_flutter, using this only for web
+import 'dart:html' as html;
 
-triggerAlert(context) {
-  String alertMsg = 'Alert condition triggered!';
+Future<void> localNotificationsWeb(String message) async {
+  var permission = html.Notification.permission;
+  if (permission != 'granted') {
+    permission = await html.Notification.requestPermission();
+  }
+  if (permission == 'granted') {
+    html.Notification("Eagler", body: message);
+  }
+}
+
+triggerAlert(appState, context) {
+  String alertMsg =
+      'Alert condition triggered! Value ${appState.condition.toString()} ${appState.conditionThresholdValue.toString()}';
   SnackBar snackBar = SnackBar(
     content: Text(alertMsg),
   );
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  local_notifications.send(alertMsg);
+  if (kIsWeb) {
+    localNotificationsWeb(alertMsg);
+  } else {
+    local_notifications.send(alertMsg);
+  }
 }
 
 makeRequest(appState, context) async {
@@ -51,20 +69,20 @@ makeRequest(appState, context) async {
       if (appState.condition.toString() == '>' &&
           double.tryParse(appState.response) is double &&
           double.parse(appState.response) > appState.conditionThresholdValue) {
-        triggerAlert(context);
+        triggerAlert(appState, context);
       } else if (appState.condition.toString() == '<' &&
           double.tryParse(appState.response) is double &&
           double.parse(appState.response) < appState.conditionThresholdValue) {
-        triggerAlert(context);
+        triggerAlert(appState, context);
       } else if (appState.condition.toString() == '=' &&
           appState.response.toString() ==
               appState.conditionThresholdValue.toString()) {
-        triggerAlert(context);
+        triggerAlert(appState, context);
       } else if (appState.condition.toString() == 'includes' &&
           appState.response
               .toString()
               .contains(appState.conditionThresholdValue.toString())) {
-        triggerAlert(context);
+        triggerAlert(appState, context);
       } else {
         SnackBar snackBar = SnackBar(
           content: Text('Requested new data, alert condition not met'),

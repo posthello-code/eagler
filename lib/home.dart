@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget {
         SizedBox(
           width: 400,
           child: Text('Enter a url that returns a JSON response. '
-              'You can define an path the the data you want to alert on. '
+              'You can define a path of the data you want to alert on. '
               'If the condition is met, '
               'the app will alert you with a push notification. '
               'The recurring option will send a request once a minute.'),

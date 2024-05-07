@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
           child: Text('Enter a url that returns a JSON response. '
               'You can define an path the the data you want to alert on. '
               'If the condition is met, '
-              'the app will alert you with a push notification. '
+              'the app will alert you with a local notification. '
               'The recurring option will send a request once a minute.'),
         ),
         SizedBox(height: 20),
@@ -110,7 +110,8 @@ class HomePage extends StatelessWidget {
             TextField(
               onChanged: (value) {
                 if (value != '' && int.tryParse(value) is int) {
-                  appState.conditionThresholdValue = int.parse(value);
+                  appState.conditionThresholdValue =
+                      int.parse(value).toDouble();
                 } else if (value != '' && double.tryParse(value) is double) {
                   appState.conditionThresholdValue = double.parse(value);
                 } else if (value != '') {
@@ -118,10 +119,12 @@ class HomePage extends StatelessWidget {
                 } else {
                   appState.conditionThresholdValue = 0;
                 }
+                appState.prefs
+                    ?.setDouble('threshold', appState.conditionThresholdValue);
               },
               maxLines: 1,
               decoration: InputDecoration(
-                hintText: '0',
+                hintText: appState.conditionThresholdValue.toString(),
                 constraints: BoxConstraints(maxWidth: 75),
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -138,6 +141,7 @@ class HomePage extends StatelessWidget {
                   value: appState.recurring,
                   onChanged: (bool value) {
                     appState.updateRecurringState(value, appState, context);
+                    appState.prefs?.setBool('recurring', value);
                   },
                 ),
               ],
@@ -207,9 +211,11 @@ class ConditionDropdownMenu extends StatelessWidget {
           DropdownMenuEntry(value: '=', label: '=', enabled: true),
           DropdownMenuEntry(value: 'includes', label: 'includes', enabled: true)
         ],
+        initialSelection: appState.condition,
         menuStyle: Theme.of(context).dropdownMenuTheme.menuStyle,
-        onSelected: (label) => {
-          appState.updateCondition(label.toString()),
+        onSelected: (label) {
+          appState.updateCondition(label.toString());
+          appState.prefs?.setString('condition', label.toString());
         },
       ),
     );

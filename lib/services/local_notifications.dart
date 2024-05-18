@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'html.dart' as html;
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -31,4 +32,14 @@ send(message) {
   flutterLocalNotificationsPlugin.show(
       0, 'Eagler Alerting', message, notificationDetails,
       payload: 'item x');
+}
+
+Future<void> sendWeb(String message) async {
+  var permission = html.Notification.permission;
+  if (permission != 'granted') {
+    permission = await html.Notification.requestPermission();
+  }
+  if (permission == 'granted') {
+    html.Notification("Eagler", body: message);
+  }
 }

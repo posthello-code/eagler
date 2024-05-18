@@ -56,7 +56,7 @@ class LoginPage extends StatelessWidget {
             } else {
               // State has been initialized, return the login page widget
               return Scaffold(
-                backgroundColor: Theme.of(context).colorScheme.background,
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 body: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

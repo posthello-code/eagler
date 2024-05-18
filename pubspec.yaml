@@ -17,7 +17,7 @@ dependencies:
   shared_preferences: ^2.2.3
   flutter_local_notifications: ^17.1.2
   flutter_launcher_icons: ^0.13.1
-  android_alarm_manager_plus: ^3.0.3
+  android_alarm_manager_plus: ^4.0.3
 
 dev_dependencies:
   flutter_test:

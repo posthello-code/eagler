@@ -1,23 +1,11 @@
 import 'dart:convert';
-
+import 'package:eagler/services/local_notifications.dart';
 import 'package:eagler/services/response_extractor.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'local_notifications.dart' as local_notifications;
 import 'package:flutter/foundation.dart' show kIsWeb;
 // ignore: avoid_web_libraries_in_flutter, using this only for web
-import 'dart:html' as html;
-
-Future<void> localNotificationsWeb(String message) async {
-  var permission = html.Notification.permission;
-  if (permission != 'granted') {
-    permission = await html.Notification.requestPermission();
-  }
-  if (permission == 'granted') {
-    html.Notification("Eagler", body: message);
-  }
-}
 
 triggerAlert(appState, context) {
   String alertMsg =
@@ -28,9 +16,9 @@ triggerAlert(appState, context) {
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
   if (kIsWeb) {
-    localNotificationsWeb(alertMsg);
+    sendWeb(alertMsg);
   } else {
-    local_notifications.send(alertMsg);
+    send(alertMsg);
   }
 }
 

@@ -4,8 +4,9 @@ import 'package:eagler/services/request_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'main.dart';
+import 'constants.dart' as constants;
 
-String defaultUrl = 'https://api.quotable.io/random';
+String defaultUrl = constants.defaultUrl;
 
 class HomePage extends StatelessWidget {
   @override
@@ -40,7 +41,6 @@ class HomePage extends StatelessWidget {
           maxLines: 3,
           decoration: InputDecoration(
             hintText: appState.prefs?.getString('url'),
-            helperText: 'Default: $defaultUrl',
             constraints: BoxConstraints(maxWidth: 400),
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             labelText: 'Http URL',
@@ -90,11 +90,8 @@ class HomePage extends StatelessWidget {
                       ? appState.pathValidatorString
                       : null,
                   errorMaxLines: 5,
-                  helperText: 'Default: ${jsonEncode(defaultExtractorPath)}'
-                      '\n\n'
-                      'Example:\n'
-                      'body.content would return "a profound quote" from the JSON below\n\n'
-                      '{ "content": "a profound quote" }',
+                  helperText:
+                      'Default url: ${jsonEncode(defaultExtractorPath)}',
                   constraints: BoxConstraints(maxWidth: 350),
                   helperMaxLines: 10,
                   contentPadding:

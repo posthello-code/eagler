@@ -10,8 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
+import 'constants.dart' as constants;
 
-const String defaultExtractorPath = 'body.content';
+const String defaultExtractorPath = 'body.profiles';
 
 @pragma('vm:entry-point')
 backgroundAlarmCallback() {
@@ -77,7 +78,7 @@ class MyAppState extends ChangeNotifier {
   late SharedPreferences? prefs;
   late bool recurring;
   late String condition;
-  String defaultUrl = 'https://api.quotable.io/random';
+  String defaultUrl = constants.defaultUrl;
   String token = '';
   String url = '';
   String extractorPath = defaultExtractorPath;
